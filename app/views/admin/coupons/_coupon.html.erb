@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coupon Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+  <div class="container mx-auto py-10">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-2xl font-bold text-gray-800">Coupon Details</h2>
+      </div>
+      <div class="px-6 py-4">
+        <div id="<%= dom_id coupon %>">
+          <div class="mb-4">
+            <span class="font-bold text-gray-600">Code:</span> 
+            <span class="text-gray-800"><%= coupon.code %></span>
+          </div>
+
+          <div class="mb-4">
+            <span class="font-bold text-gray-600">Discount:</span> 
+            <span class="text-gray-800"><%= coupon.discount %>%</span> 
+          </div>
+
+          <div class="mb-4">
+            <span class="font-bold text-gray-600">Description:</span> 
+            <span class="text-gray-800"><%= coupon.description %></span>
+          </div>
+
+          <div class="mb-4">
+            <span class="font-bold text-gray-600">Valid From:</span> 
+            <span class="text-gray-800"><%= coupon.valid_from.strftime("%B %d, %Y") %></span>
+          </div>
+
+          <div class="mb-4">
+            <span class="font-bold text-gray-600">Valid Until:</span> 
+            <span class="text-gray-800"><%= coupon.valid_until.strftime("%B %d, %Y") %></span>
+          </div>
+
+          <div class="mb-4">
+            <span class="font-bold text-gray-600">Max Usage:</span> 
+            <span class="text-gray-800"><%= coupon.max_usage %></span>
+          </div>
+
+          <div class="mb-4">
+            <span class="font-bold text-gray-600">Status:</span> 
+            <span class="text-gray-800"><%= coupon.status %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

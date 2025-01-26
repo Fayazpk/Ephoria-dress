@@ -1,0 +1,45 @@
+<h1>Editing Banner</h1>
+
+<%= form_with(model: [:admin, @banner], local: true) do |form| %>
+
+  <% if @banner.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(@banner.errors.count, "error") %> prohibited this banner from being saved:</h2>
+
+      <ul>
+        <% @banner.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :image %>
+    <%= form.file_field :images, multiple: true %> 
+</div>
+
+  </div>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_area :description %>
+  </div>
+
+  <div class="field">
+    <%= form.label :active %>
+    <%= form.check_box :active %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
+
+<%= link_to 'Show', [:admin, @banner] %> |
+<%= link_to 'Back', admin_banners_path %>

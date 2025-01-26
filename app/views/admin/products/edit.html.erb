@@ -1,0 +1,68 @@
+<%= form_with(model: @product, url: admin_product_path(@product), method: :patch, local: true, multipart: true) do |form| %>
+  <!-- Name Field -->
+  <div class="mb-3">
+    <%= form.label :name, "Product Name" %>
+    <%= form.text_field :name, class: "form-control" %>
+  </div>
+
+  <!-- Description Field -->
+  <div class="mb-3">
+    <%= form.label :description, "Product Description" %>
+    <%= form.text_area :description, class: "form-control" %>
+  </div>
+
+  <!-- Category Select Field -->
+  <div class="mb-3">
+    <%= form.label :category_id, "Category" %>
+    <%= form.collection_select :category_id, Category.all, :id, :name, { prompt: "Select a category" }, class: "form-select" %>
+  </div>
+
+  <!-- Subcategory Select Field -->
+  <div class="mb-3">
+    <%= form.label :subcategory_id, "Subcategory" %>
+    <%= form.grouped_collection_select :subcategory_id, Category.includes(:subcategories), :subcategories, :name, :id, :name, { prompt: "Select a subcategory" }, class: "form-select" %>
+  </div>
+
+  <!-- Product Images Field -->
+  <div class="mb-3">
+    <%= form.label :images, "Product Images" %>
+    <%= form.file_field :images, multiple: true, class: "form-control" %>
+  </div>
+
+  <!-- Base Price Field -->
+  <div class="mb-3">
+    <%= form.label :base_price, "Base Price" %>
+    <%= form.number_field :base_price, step: 0.01, class: "form-control" %>
+  </div>
+
+  <!-- Discount Fields -->
+  <div class="mb-3">
+    <%= form.fields_for :discounts do |discount_form| %>
+      <div class="form-group">
+        <%= discount_form.label :discount_percentage, "Discount Percentage" %>
+        <%= discount_form.number_field :discount_percentage, step: 0.01, class: "form-control" %>
+      </div>
+    <% end %>
+  </div>
+
+  <h4>Product Variants</h4>
+  <%= form.fields_for :product_variants do |variant_form| %>
+    <div class="variant-fields mb-3">
+      <div class="row g-3">
+        <% variant_form.object.product_variant_sizes.each do |product_variant_size| %>
+          <div class="col-md-3">
+            <%= variant_form.fields_for :product_variant_sizes, product_variant_size do |size_form| %>
+              <%= size_form.hidden_field :size_id, value: product_variant_size.size.id %>
+              <%= size_form.label :stock, "#{product_variant_size.size.size} Stock", class: "form-label" %>
+              <%= size_form.number_field :stock, class: "form-control", min: 0, placeholder: "Stock for #{product_variant_size.size.size}" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.submit "Update Product", class: "btn btn-primary" %>
+  </div>
+<% end %> <!-- Close the form_with block -->

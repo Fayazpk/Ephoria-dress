@@ -1,0 +1,34 @@
+C:\Users\Admin\Desktop\ruby\euphoria\app\views\usermodule\orders\invoice.pdf.erb
+<div class="invoice">
+  <h1>Invoice for Order #<%= @checkout.id %></h1>
+  <p>Order Date: <%= @checkout.created_at.strftime("%B %d, %Y") %></p>
+  <p>Status: <%= @checkout.status.titleize %></p>
+  <p>Payment Method: <%= @checkout.payment_method.titleize %></p>
+
+  <h3>Items Ordered</h3>
+  <ul>
+    <% @checkout.order_items.each do |item| %>
+      <li>
+        <%= item.product.name %> - Size: <%= item.size %>, Qty: <%= item.quantity %>, Price: <%= number_to_currency(item.unit_price) %>
+      </li>
+    <% end %>
+  </ul>
+
+  <h3>Order Summary</h3>
+  <p>Subtotal: <%= number_to_currency(@checkout.order_items.sum(&:total)) %></p>
+  <p>Shipping: <%= number_to_currency(10.0) %></p>
+  <p>Tax: <%= number_to_currency(@checkout.total_price * 0.1) %></p>
+  <% if @checkout.applied_coupon.present? %>
+    <p>Discount: -<%= number_to_currency(@checkout.discount) %></p>
+  <% end %>
+  <p><strong>Total: <%= number_to_currency(@checkout.total_price) %></strong></p>
+
+  <h3>Shipping Address</h3>
+  <p><%= @checkout.address.first_name %> <%= @checkout.address.last_name %></p>
+  <p><%= @checkout.address.street_address %></p>
+  <% if @checkout.address.building_name.present? %>
+    <p><%= @checkout.address.building_name %></p>
+  <% end %>
+  <p><%= @checkout.address.city.name %>, <%= @checkout.address.state.name %></p>
+  <p>Phone: <%= @checkout.address.phone %></p>
+</div>

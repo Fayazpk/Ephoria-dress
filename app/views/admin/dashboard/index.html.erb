@@ -1,0 +1,263 @@
+<%# app/views/admin/dashboard/index.html.erb %>
+
+<!-- Top Header -->
+<div class="top-header d-flex justify-content-between align-items-center">
+  <h2 class="mb-0">Dashboard</h2>
+  <div>
+    <%= button_to "Logout", session_path, method: :delete, class: "btn btn-gradient" %>
+  </div>
+</div>
+
+<!-- Sales Report Section -->
+<div class="card dashboard-card mt-4">
+  <div class="card-body">
+    <h4 class="card-title mb-4">Sales Report</h4>
+
+    <!-- Date Range Selector -->
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-outline-primary active" data-range="daily">Daily</button>
+          <button type="button" class="btn btn-outline-primary" data-range="weekly">Weekly</button>
+          <button type="button" class="btn btn-outline-primary" data-range="monthly">Monthly</button>
+          <button type="button" class="btn btn-outline-primary" data-range="yearly">Yearly</button>
+          <button type="button" class="btn btn-outline-primary" data-range="custom">Custom</button>
+        </div>
+      </div>
+
+      <!-- Custom Date Range -->
+      <div class="col-md-4 custom-date-range" style="display: none;">
+        <div class="input-group">
+          <input type="date" class="form-control" id="start_date">
+          <span class="input-group-text">to</span>
+          <input type="date" class="form-control" id="end_date">
+          <button class="btn btn-primary" id="apply-custom-range">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sales Summary Cards -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Total Sales</h5>
+            <h3 class="mb-0" id="total-sales">₹0</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Total Orders</h5>
+            <h3 class="mb-0" id="total-orders">0</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Total Discount</h5>
+            <h3 class="mb-0" id="total-discount">₹0</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Total Products</h5>
+            <h3 class="mb-0" id="total-products"><%= @report_data[:total_products] %></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Total Users</h5>
+            <h3 class="mb-0" id="total-users"><%= @report_data[:total_users] %></h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Total Orders</h5>
+            <h3 class="mb-0" id="total-orders-count"><%= @report_data[:total_orders_count] %></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if @top_products.present? %>
+      <h3 class="mb-4">Top 3 Selling Products this Month:</h3>
+      <div class="row">
+        <% @top_products.each do |product_name| %>
+          <div class="col-md-4">
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title"><%= product_name %></h5>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p>No products sold this month.</p>
+    <% end %>
+
+    <!-- Sales Graph -->
+    <div class="card">
+      <div class="card-body">
+        <canvas id="salesChart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Sales Report Table -->
+<div class="card mt-4">
+  <div class="card-body">
+    <h4 class="card-title mb-4">Sales Data</h4>
+    <table class="table table-striped" id="sales-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Total Orders</th>
+          <th>Total Sales (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @report_data[:sales_by_date].each do |date, sales| %>
+          <tr>
+            <td><%= date %></td>
+            <td><%= @report_data[:orders].select { |order| order.created_at.to_date == date.to_date }.count %></td>
+            <td><%= number_to_currency(sales, unit: '₹', format: '%u %n') %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Include Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    let salesChart;
+    const ctx = document.getElementById('salesChart').getContext('2d');
+
+    // Function to render the chart
+    function renderChart(labels, data) {
+      if (salesChart) {
+        salesChart.destroy(); // Destroy existing chart instance if any
+      }
+
+      salesChart = new Chart(ctx, {
+        type: 'line', // Chart type
+        data: {
+          labels: labels, // X-axis labels (dates)
+          datasets: [{
+            label: 'Sales (₹)', // Label for the dataset
+            data: data, // Y-axis data (sales amount)
+            backgroundColor: 'rgba(54, 162, 235, 0.2)', // Bar color (light blue)
+            borderColor: 'rgba(54, 162, 235, 1)', // Border color (darker blue)
+            borderWidth: 1 // Border width
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Sales Amount (₹)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Date'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Initial chart rendering
+    function updateDashboard(range, startDate = null, endDate = null) {
+      fetchAndUpdateSalesData(range, startDate, endDate);
+    }
+
+    // Function to fetch and update sales data
+    function fetchAndUpdateSalesData(range, startDate = null, endDate = null) {
+      let url = `/admin/dashboard/sales_report?range=${range}`;
+      if (startDate && endDate) {
+        url += `&start_date=${startDate}&end_date=${endDate}`;
+      }
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          // Update Sales Summary Cards (using INR for Indian Rupees)
+          document.getElementById('total-sales').textContent = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(data.total_sales);
+          document.getElementById('total-orders').textContent = data.orders;
+          document.getElementById('total-discount').textContent = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(data.total_discount);
+
+          // Update the chart
+          const labels = Object.keys(data.sales_by_date);
+          const salesData = Object.values(data.sales_by_date);
+          renderChart(labels, salesData);
+
+          // Update Sales Data Table
+          const salesTableBody = document.querySelector('#sales-table tbody');
+          salesTableBody.innerHTML = ''; // Clear existing data
+
+          Object.entries(data.sales_by_date).forEach(([date, sales]) => {
+            const newRow = salesTableBody.insertRow();
+            newRow.insertCell().textContent = date;
+            // Assuming you are sending order counts from the backend:
+            newRow.insertCell().textContent = data.orders_by_date[date]; // Use orders_by_date from backend
+            newRow.insertCell().textContent = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(sales);
+          });
+
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Event listeners for date range selection
+    document.querySelectorAll('button[data-range]').forEach(button => {
+      button.addEventListener('click', function () {
+        // Remove 'active' class from all buttons
+        document.querySelectorAll('.btn-group .btn').forEach(btn => {
+          btn.classList.remove('active');
+          btn.classList.add('btn-outline-primary');
+        });
+
+        // Add 'active' class to the clicked button
+        this.classList.add('active');
+        this.classList.remove('btn-outline-primary');
+
+        const range = this.dataset.range;
+        if (range === 'custom') {
+          document.querySelector('.custom-date-range').style.display = 'block';
+        } else {
+          document.querySelector('.custom-date-range').style.display = 'none';
+          updateDashboard(range);
+        }
+      });
+    });
+
+    // Event listener for custom date range apply button
+    document.getElementById('apply-custom-range').addEventListener('click', () => {
+      const startDate = document.getElementById('start_date').value;
+      const endDate = document.getElementById('end_date').value;
+      updateDashboard('custom', startDate, endDate);
+    });
+
+    // Initial load
+    updateDashboard('daily');
+  });
+</script>

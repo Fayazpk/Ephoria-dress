@@ -1,0 +1,24 @@
+<h1>Banner Details</h1>
+
+<p>
+  <strong>Image:</strong>
+  <%= image_tag @banner.image if @banner.image.attached? %> 
+</p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @banner.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @banner.description %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @banner.active %>
+</p>
+
+<%= link_to 'Edit', edit_admin_banner_path(@banner) %> |
+<%= link_to 'Back', admin_banners_path %>
