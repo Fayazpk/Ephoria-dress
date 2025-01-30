@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Euphoria - OTP Verification</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -13,7 +15,6 @@
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="container mx-auto flex shadow-lg rounded-xl overflow-hidden max-w-4xl">
         <!-- OTP Verification Form Section -->
-        
         <%= form_with(
             model: @user, 
             url: verify_otp_registration_path(@user), 
@@ -21,6 +22,8 @@
             local: true, 
             class: "w-full md:w-1/2 bg-white p-12"
         ) do |form| %>
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
             <% if flash[:alert].present? %>
                 <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
                     <strong class="font-bold">Error:</strong>
@@ -47,23 +50,25 @@
                         placeholder: "Enter 6-digit OTP",
                         maxlength: 6,
                         pattern: "[0-9]{6}",
-                        inputmode: "numeric"
+                        inputmode: "numeric",
+                        required: true,
+                        autocomplete: "off"
                     %>
                 </div>
 
                 <div class="text-center text-sm text-gray-600">
-                    Didn't receive the code? 
+                    <span>Didn't receive the code?</span>
                     <%= button_to "Resend OTP", 
                         resend_otp_registration_path(@user), 
                         method: :post,
-                        class: "text-gray-800 font-semibold hover:underline",
+                        class: "text-gray-800 font-semibold hover:underline ml-1",
                         form_class: "inline" 
                     %>
                 </div>
 
                 <div>
                     <%= form.submit "Verify OTP", 
-                        class: "w-full bg-gray-800 text-white py-3 rounded-md hover:bg-gray-700 transition duration-300 font-semibold" 
+                        class: "w-full bg-gray-800 text-white py-3 rounded-md hover:bg-gray-700 transition duration-300 font-semibold cursor-pointer" 
                     %>
                 </div>
 
@@ -109,5 +114,14 @@
             </div>
         </div>
     </div>
+
+    <% if Rails.env.development? %>
+        <%= javascript_tag do %>
+            // Prevent form resubmission on page refresh
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.href);
+            }
+        <% end %>
+    <% end %>
 </body>
 </html>

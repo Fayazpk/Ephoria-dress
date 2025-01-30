@@ -2,6 +2,7 @@ module Usermodule
   class OrdersController < ApplicationController
     before_action :authenticate_user!
     before_action :set_order, only: [:show, :update_address, :request_return]
+    before_action :set_pdf_format
 
     def index
     
@@ -50,20 +51,22 @@ module Usermodule
     end
 
     def download_invoice
-      @checkout = current_user.checkouts.find(params[:id])
+      @checkout = Checkout.find_by(id: params[:id], user_id: current_user.id)
+      
+      if @checkout.nil?
+        redirect_to orders_path, alert: "Invoice not found."
+        return
+      end
+    
       respond_to do |format|
+        format.html 
         format.pdf do
           render pdf: "invoice_#{@checkout.id}",
-                 template: 'usermodule/orders/invoice.pdf.erb',  # Changed this line
-                 layout: 'pdf.html',
-                 disposition: 'attachment',
-                 page_size: 'A4',
-                 margin: { top: 0, bottom: 0, left: 0, right: 0 }
+                 template: "usermodule/orders/invoice",
+                 layout: "pdf",
+                 disposition: "attachment" 
         end
-        format.html { redirect_to usermodule_orders_path, notice: 'Invoice download is only available in PDF format.' }
       end
-    rescue ActiveRecord::RecordNotFound
-      redirect_to usermodule_orders_path, alert: 'Order not found.'
     end
     
     def complete_pending_payment
@@ -85,6 +88,9 @@ module Usermodule
         reason: params[:reason]
       )
       @return_request.save
+    end
+    def set_pdf_format
+      request.format = :pdf if params[:format] == 'pdf'
     end
 
     def set_order

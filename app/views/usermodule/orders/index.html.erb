@@ -38,7 +38,8 @@
                 <% if order.payment_status == 'pending' %>
                   <%= link_to 'Complete Payment',
                       complete_pending_payment_usermodule_order_path(order),
-                      class: 'mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-medium text-sm' %>
+                      class: 'mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-medium text-sm',
+                      data: { payment_method: order.payment_method } %>
                 <% end %>
               </li>
             <% end %>
@@ -225,6 +226,93 @@
         default: return 'bg-gray-200 text-gray-800';
       }
     }
+
+    # // Function to complete pending payment
+    # const completePendingPayment = async (checkoutId, paymentMethod) => {
+    #   try {
+    #     // Disable the button to prevent multiple clicks
+    #     const completePaymentButton = document.querySelector(`a[href="/usermodule/orders/${checkoutId}/complete_pending_payment"]`);
+    #     completePaymentButton.disabled = true;
+    #     completePaymentButton.textContent = 'Processing...';
+
+    #     if (paymentMethod === 'razorpay') {
+    #       const response = await fetch(`/usermodule/orders/${checkoutId}/complete_pending_payment`, {
+    #         method: 'POST',
+    #         headers: {
+    #           'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content,
+    #           'Accept': 'application/json'
+    #         }
+    #       });
+
+    #       const data = await response.json();
+
+    #       if (response.ok) {
+    #         // Redirect to Razorpay
+    #         const options = {
+    #           "key": "<%= ENV['RAZORPAY_KEY_ID'] %>", // Replace with your Razorpay Key ID
+    #           "amount": data.amount,
+    #           "currency": data.currency,
+    #           "name": "<%= Rails.application.config.site_name rescue 'YourAppName' %>",
+    #           "description": "Order Payment",
+    #           "order_id": data.razorpay_order_id,
+    #           "handler": function (response) {
+    #             // Handle successful payment here
+    #             // You may want to update the order status or redirect to a success page
+    #             console.log(response);
+    #             alert('Payment successful!');
+    #             window.location.reload(); // Reload the page to reflect the updated order status
+    #           },
+    #           "prefill": {
+    #             "name": "<%= current_user.name %>",
+    #             "email": "<%= current_user.email %>"
+    #           },
+    #           "theme": {
+    #             "color": "#F37254"
+    #           }
+    #         };
+    #         const rzp1 = new Razorpay(options);
+    #         rzp1.open();
+    #       } else {
+    #         // Handle errors (e.g., failed to create Razorpay order)
+    #         alert(data.error || 'Failed to process payment. Please try again.');
+    #       }
+    #     } else if (paymentMethod === 'wallet') {
+    #       // Wallet payment logic here
+    #       // ... 
+    #       // For example, you can make a fetch call to your backend 
+    #       // to process the wallet payment and then handle the response 
+          
+    #     } else {
+    #       alert('This payment method cannot be completed currently.');
+    #     }
+
+    #   } catch (error) {
+    #     console.error('Error completing payment:', error);
+    #     alert('Failed to complete payment. Please try again.');
+    #   } finally {
+    #     // Re-enable the button regardless of success or failure
+    #     if (completePaymentButton) {
+    #       completePaymentButton.disabled = false;
+    #       completePaymentButton.textContent = 'Complete Payment';
+    #     }
+    #   }
+    # };
+
+    # // Event listener for 'Complete Payment' links
+    # document.addEventListener('turbolinks:load', () => {
+    #   const completePaymentLinks = document.querySelectorAll('a[href^="/usermodule/orders/"]:not([href$=".pdf"])');
+
+    #   completePaymentLinks.forEach(link => {
+    #     link.addEventListener('click', (event) => {
+    #       event.preventDefault(); // Prevent default link behavior
+    #       const checkoutId = link.pathname.split('/')[3]; // Extract checkoutId from the URL
+    #       const paymentMethod = link.dataset.paymentMethod; // Get payment method from data attribute
+    #       completePendingPayment(checkoutId, paymentMethod);
+    #     });
+    #   });
+    # });
+
   </script>
 </body>
 </html>
+

@@ -31,7 +31,6 @@ namespace :usermodule do
       end
     end
     resources :orders, only: [:index, :show, :update] do
-      
       patch :cancel, on: :member
       patch :update_address, on: :member
       member do
@@ -53,10 +52,11 @@ namespace :usermodule do
         post :apply_coupon
       end
       member do
+        get :complete_pending_payment
         get :confirmation, as: :order_confirmation
         patch :update_status
         patch :confirm_payment
-        
+         get 'complete_pending_payment'
         post :razorpay_callback
         get :razorpay_success
         get :razorpay_failure
@@ -98,6 +98,7 @@ namespace :usermodule do
   get 'dashboard/sales_report', to: 'dashboard#sales_report'
     resources :banners
     resources :coupons
+    
     resources :dashboard, only: [:index] do
       collection do
         get :sales_report

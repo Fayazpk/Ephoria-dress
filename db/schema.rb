@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_24_053645) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_28_040138) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -48,15 +48,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_24_053645) do
     t.string "building_name"
     t.string "street_address"
     t.string "phone"
-    t.bigint "city_id", null: false
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "state_id"
-    t.bigint "country_id"
-    t.index ["city_id"], name: "index_addresses_on_city_id"
-    t.index ["country_id"], name: "index_addresses_on_country_id"
-    t.index ["state_id"], name: "index_addresses_on_state_id"
+    t.string "country_name"
+    t.string "state_name"
+    t.string "city_name"
     t.index ["user_id"], name: "index_addresses_on_user_id"
   end
 
@@ -340,9 +337,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_24_053645) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "addresses", "cities"
-  add_foreign_key "addresses", "countries"
-  add_foreign_key "addresses", "states"
   add_foreign_key "addresses", "users"
   add_foreign_key "admin_products", "categories"
   add_foreign_key "admin_products", "sizes"

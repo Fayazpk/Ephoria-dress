@@ -37,16 +37,30 @@
         <%= form.text_field :street_address, class: "form-input mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" %>
       </div>
 
-      <!-- Country, State, and City Dropdowns -->
-      <%= render 'location_fields', form: form %>
+     
 
       <!-- Phone Field -->
       <div class="field">
         <%= form.label :phone, class: "block text-sm font-semibold text-gray-700" %>
         <%= form.text_field :phone, class: "form-input mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" %>
       </div>
-      
+      <div class="grid grid-cols-3 gap-6">
+      <div>
+        <%= form.label :country_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :country_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <%= form.label :state_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :state_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <%= form.label :city_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :city_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
     </div>
+  
 
     <div class="mt-6">
       <%= form.submit "Save Address", class: "btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300" %>

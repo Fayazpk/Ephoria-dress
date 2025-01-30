@@ -94,7 +94,7 @@
                         <% if @checkout.address.building_name.present? %>
                             <p><%= @checkout.address.building_name %></p>
                         <% end %>
-                        <p><%= @checkout.address.city.name %>, <%= @checkout.address.state.name %></p>
+                        <p><%= @checkout.address.city_name %>, <%= @checkout.address.state_name %></p>
                         <p>Phone: <%= @checkout.address.phone %></p>
                     </div>
                 </div>

@@ -111,22 +111,22 @@
 </div>
 
 <!-- Flash Messages -->
-<% if flash.any? %>
-  <div class="fixed bottom-4 right-4 z-50" id="flash-messages">
-    <% flash.each do |type, message| %>
-      <div class="<%= type == 'notice' ? 'bg-green-500' : 'bg-red-500' %> text-white px-6 py-4 rounded-lg shadow-lg mb-4 flex items-center"
-           data-controller="flash"
-           data-action="click->flash#dismiss">
-        <% if type == 'notice' %>
-          <i class="fas fa-check-circle mr-2"></i>
-        <% else %>
-          <i class="fas fa-exclamation-circle mr-2"></i>
-        <% end %>
-        <%= message %>
-        <button class="ml-4 text-white hover:text-gray-200 focus:outline-none">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    <% end %>
-  </div>
-<% end %>
+# <% if flash.any? %>
+#   <div class="fixed bottom-4 right-4 z-50" id="flash-messages">
+#     <% flash.each do |type, message| %>
+#       <div class="<%= type == 'notice' ? 'bg-green-500' : 'bg-red-500' %> text-white px-6 py-4 rounded-lg shadow-lg mb-4 flex items-center"
+#            data-controller="flash"
+#            data-action="click->flash#dismiss">
+#         <% if type == 'notice' %>
+#           <i class="fas fa-check-circle mr-2"></i>
+#         <% else %>
+#           <i class="fas fa-exclamation-circle mr-2"></i>
+#         <% end %>
+#         <%= message %>
+#         <button class="ml-4 text-white hover:text-gray-200 focus:outline-none">
+#           <i class="fas fa-times"></i>
+#         </button>
+#       </div>
+#     <% end %>
+#   </div>
+# <% end %>

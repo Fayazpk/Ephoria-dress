@@ -1,4 +1,4 @@
-C:\Users\Admin\Desktop\ruby\euphoria\app\views\usermodule\orders\invoice.pdf.erb
+#C:\Users\Admin\Desktop\ruby\euphoria\app\views\usermodule\orders\invoice.pdf.erb
 <div class="invoice">
   <h1>Invoice for Order #<%= @checkout.id %></h1>
   <p>Order Date: <%= @checkout.created_at.strftime("%B %d, %Y") %></p>
@@ -29,6 +29,6 @@ C:\Users\Admin\Desktop\ruby\euphoria\app\views\usermodule\orders\invoice.pdf.erb
   <% if @checkout.address.building_name.present? %>
     <p><%= @checkout.address.building_name %></p>
   <% end %>
-  <p><%= @checkout.address.city.name %>, <%= @checkout.address.state.name %></p>
+  <p><%= @checkout.address.city_name %>, <%= @checkout.address.state_name %></p>
   <p>Phone: <%= @checkout.address.phone %></p>
 </div>

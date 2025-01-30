@@ -29,24 +29,24 @@ class Usermodule::WalletsController < ApplicationController
   
     private
   
-    def set_wallet
+      def set_wallet
         @wallet = current_user.wallet
         
         unless @wallet
-          @wallet = current_user.create_wallet(balance: 0.0)
-        end
-      rescue => e
-        Rails.logger.error "Wallet initialization failed: #{e.message}"
-        redirect_to root_path, alert: "Unable to access wallet. Please try again later."
+          @wallet = current_user.create_wallet!(balance: 0.0)
+        end 
+        rescue => e
+          Rails.logger.error "Wallet initialization failed: #{e.message}"
+          redirect_to root_path, alert: "Unable to access wallet. Please try again later."
       end
   
-    def validate_amount
-      amount = params[:amount].to_f
+      def validate_amount
+        amount = params[:amount].to_f
       
-      if amount < Wallet::MINIMUM_TRANSACTION_AMOUNT
-        redirect_to usermodule_wallet_path, 
+        if amount < Wallet::MINIMUM_TRANSACTION_AMOUNT
+          redirect_to usermodule_wallet_path, 
                     alert: "Minimum amount is #{number_to_currency(Wallet::MINIMUM_TRANSACTION_AMOUNT)}"
-        return
+          return
       end
   
       if amount > Wallet::MAXIMUM_TRANSACTION_AMOUNT

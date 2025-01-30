@@ -68,8 +68,8 @@ group :development, :test do
     gem "pry-rails"
     gem "city-state"
     gem "webpacker"
+    gem 'wkhtmltopdf-binary', '~> 0.12.6.8'
     gem 'wicked_pdf'
-    gem 'wkhtmltopdf-binary'
     gem "groupdate"
     gem 'rubocop', '~> 1.69', '>= 1.69.2'
     gem 'prawn' 

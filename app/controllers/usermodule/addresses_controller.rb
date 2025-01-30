@@ -2,7 +2,7 @@ module Usermodule
   class AddressesController < ApplicationController
     before_action :set_address, only: %i[show edit update destroy]
     before_action :authenticate_user!
-    before_action :load_countries, only: %i[new edit create update]
+    
 
     def index
       @addresses = current_user.addresses
@@ -105,7 +105,8 @@ end
       params.require(:address).permit(
         :first_name, :last_name, :building_name, 
         :street_address, :country_id, :state_id, 
-        :city_id, :phone
+        :city_id, :phone, :country_name, :state_name, 
+        :city_name
       )
     end
   end

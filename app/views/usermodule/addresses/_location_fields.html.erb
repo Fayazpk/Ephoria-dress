@@ -1,32 +1,30 @@
+<!-- app/views/usermodule/addresses/_form.html.erb -->
 <div>
-  <!-- Country Dropdown -->
-  <label for="countrySelect">Country:</label>
-  <select id="countrySelect" class="form-select mt-1 block w-full">
-    <option value="">Select Country</option>
-    <% Country.pluck(:name, :id).each do |name, id| %>
-      <option value="<%= id %>"><%= name %></option>
-    <% end %>
-  </select>
+  <!-- Country Input -->
+  <div class="field">
+    <label for="address_country_name">Country:</label>
+    <%= form.text_field :country_name, 
+                        class: "form-input mt-1 block w-full", 
+                        required: true %>
+  </div>
 </div>
 
 <div>
-  <!-- State Dropdown -->
-  <label for="stateSelect">State:</label>
-  <select id="stateSelect" class="form-select mt-1 block w-full" disabled>
-    <option value="">Select State</option>
-    <% State.pluck(:name, :id).each do |name, id| %>
-       <option value="<%= id %>"><%= name %></option>
-    <% end %>
-  </select>
+  <!-- State Input -->
+  <div class="field">
+    <label for="address_state_name">State:</label>
+    <%= form.text_field :state_name, 
+                        class: "form-input mt-1 block w-full", 
+                        required: true %>
+  </div>
 </div>
 
 <div>
-  <!-- City Dropdown -->
-  <label for="citySelect">City:</label>
-  <select id="citySelect" class="form-select mt-1 block w-full" disabled>
-    <option value="">Select City</option>
-    <% City.pluck(:name, :id).each do |name, id| %>
-      <option value="<%= id %>"><%= name %></option>
-   <% end %>
-  </select>
+  <!-- City Input -->
+  <div class="field">
+    <label for="address_city_name">City:</label>
+    <%= form.text_field :city_name, 
+                        class: "form-input mt-1 block w-full", 
+                        required: true %>
+  </div>
 </div>

@@ -8,23 +8,13 @@ module Usermodule
     before_action :load_addresses, only: [:new, :create]
     before_action :set_checkout, only: [:razorpay_callback, :show]
 
-   def new
-  if params[:pending_checkout_id]
-    @existing_checkout = current_user.checkouts.find(params[:pending_checkout_id])
-    # Pre-fill checkout details from the existing pending checkout
-    @checkout = Checkout.new(
-      cart: @cart, 
-      user: current_user,
-      address_id: @existing_checkout.address_id,
-      # Other relevant details you want to carry over
-    )
-  else
-    @checkout = Checkout.new(cart: @cart, user: current_user)
-  end
-  calculate_totals
-rescue StandardError => e
-  handle_error('checkout initialization', e, usermodule_cart_path)
-end
+    def new
+      Rails.logger.info "Initializing checkout for user: #{current_user.id}"
+      @checkout = Checkout.new(cart: @cart, user: current_user)
+      calculate_totals
+    rescue StandardError => e
+      handle_error('checkout initialization', e, usermodule_cart_path)
+    end
 
     def create
       ActiveRecord::Base.transaction do
@@ -282,7 +272,7 @@ end
       return unless @cart
 
       @subtotal = @cart.orderables.sum { |orderable| calculate_orderable_price(orderable) }
-      @tax = (@subtotal * 0.1).round(2)
+      @tax = (@subtotal * 0.1)
       @shipping = 10.0
       @discount = calculate_coupon_discount(params[:coupon_code])
       @total = (@subtotal + @tax + @shipping - @discount).round(2)
@@ -312,6 +302,7 @@ end
       end
     end
     
+
     def calculate_final_total
       @total ||= 0
       @discount ||= 0

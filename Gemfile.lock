@@ -580,7 +580,7 @@ DEPENDENCIES
   web-console
   webpacker
   wicked_pdf
-  wkhtmltopdf-binary
+  wkhtmltopdf-binary (~> 0.12.6.8)
 
 BUNDLED WITH
    2.5.21
