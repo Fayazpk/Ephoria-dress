@@ -163,14 +163,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_28_040138) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "discounts", force: :cascade do |t|
-    t.bigint "product_id", null: false
-    t.decimal "discount_percentage", precision: 5, scale: 2, default: "0.0"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["product_id"], name: "index_discounts_on_product_id"
-  end
-
   create_table "order_items", force: :cascade do |t|
     t.bigint "checkout_id", null: false
     t.bigint "product_id", null: false
@@ -347,7 +339,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_28_040138) do
   add_foreign_key "checkouts", "carts"
   add_foreign_key "checkouts", "users"
   add_foreign_key "cities", "states"
-  add_foreign_key "discounts", "products"
   add_foreign_key "order_items", "checkouts"
   add_foreign_key "order_items", "product_variants"
   add_foreign_key "order_items", "products"

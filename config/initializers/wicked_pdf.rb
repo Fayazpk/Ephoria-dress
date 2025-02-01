@@ -1,5 +1,6 @@
 WickedPdf.configure do |config|
-  config.exe_path: "C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
+  config.exe_path = "C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
+
   config.layout = 'pdf'
   config.orientation = 'Portrait'
   config.lowquality = true
