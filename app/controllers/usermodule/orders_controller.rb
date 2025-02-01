@@ -5,15 +5,10 @@ module Usermodule
     before_action :set_pdf_format
 
     def index
-    
-    
       @orders = current_user.checkouts
-                                      .order(created_at: :desc)
-                                      .page(params[:page])
-                                      .per(10)
-      
-
-    
+                            .order(created_at: :desc)
+                            .page(params[:page])
+                            .per(10)
       @selected_order = @orders.find_by(id: params[:selected_order]) || @orders.first
     end
 
@@ -22,22 +17,18 @@ module Usermodule
       @order_items = @order.cart.orderables
     end
 
-   
-
     def update_address
-  
       if @order.status == "shipped"
         return redirect_to usermodule_orders_path(@order), alert: "Cannot modify shipped order"
       end
 
-    
       if @order.address.update(address_params)
         redirect_to usermodule_orders_path(@order), notice: "Address updated successfully"
       else
         redirect_to usermodule_orders_path(@order), alert: "Failed to update address"
       end
     end
-    
+
     def request_return
       if @order.can_return?
         if create_return_request
@@ -68,18 +59,37 @@ module Usermodule
         end
       end
     end
-    
+
     def complete_pending_payment
       @checkout = current_user.checkouts.find(params[:id])
       if @checkout.payment_status == 'pending'
-        redirect_to new_usermodule_checkout_path(pending_checkout_id: @checkout.id)
+        begin
+          payment_successful = process_payment(@checkout)
+
+          if payment_successful
+            @checkout.update(payment_status: 'completed')
+            redirect_to usermodule_orders_path, notice: 'Payment completed successfully.'
+          else
+            redirect_to usermodule_orders_path, alert: 'Payment failed. Please try again.'
+          end
+        rescue StandardError => e
+          redirect_to usermodule_orders_path, alert: "An error occurred: #{e.message}"
+        end
       else
         redirect_to usermodule_orders_path, alert: 'This order cannot be completed.'
       end
     end
 
-    
     private
+
+    def process_payment(checkout)
+      
+      Razorpay.setup(ENV['RAZORPAY_KEY_ID'], ENV['RAZORPAY_KEY_SECRET'])
+ 
+      payment_response = Razorpay::Order.create(amount: checkout.total_amount, currency: 'INR', receipt: checkout.id)
+
+      payment_response['status'] == 'created' # This is a placeholder; implement actual payment logic
+    end
 
     def create_return_request
       @return_request = @order.build_return_request(
@@ -89,6 +99,7 @@ module Usermodule
       )
       @return_request.save
     end
+
     def set_pdf_format
       request.format = :pdf if params[:format] == 'pdf'
     end
