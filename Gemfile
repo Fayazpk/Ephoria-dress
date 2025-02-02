@@ -66,7 +66,7 @@ gem "pry"
 gem "pry-rails"
 gem "city-state"
 gem "webpacker"
-gem 'wkhtmltopdf-binary', '~> 0.12.6.8'
+gem 'wkhtmltopdf-binary', '~> 0.12.6.5'
 gem 'wicked_pdf'
 gem "groupdate"
 gem 'rubocop', '~> 1.69', '>= 1.69.2'
