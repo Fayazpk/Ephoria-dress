@@ -73,7 +73,7 @@ gem 'rubocop', '~> 1.69', '>= 1.69.2'
 gem 'prawn' 
 gem 'caxlsx'
 gem 'caxlsx_rails'
-
+gem 'passenger', '~> 5.0', '>= 5.0.30'
 gem "web-console"
 
 group :development, :test do
