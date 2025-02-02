@@ -8,7 +8,7 @@ class User < ApplicationRecord
 
   attr_accessor :oauth_login
 
-  
+
   has_many :addresses, dependent: :destroy
   accepts_nested_attributes_for :addresses
   has_one :cart, dependent: :destroy
@@ -25,8 +25,8 @@ class User < ApplicationRecord
 
   def reset_password(new_password)
     update(
-      password: new_password, 
-      reset_token: nil, 
+      password: new_password,
+      reset_token: nil,
       reset_token_expires_at: nil
     )
   end
@@ -34,15 +34,15 @@ class User < ApplicationRecord
   def self.from_omniauth(auth)
     user = find_or_initialize_by(provider: auth.provider, uid: auth.uid)
     user.email = auth.info.email
-    user.name = auth.info.name  
-    user.password = SecureRandom.hex(10)  
+    user.name = auth.info.name
+    user.password = SecureRandom.hex(10)
     user.oauth_login = true
     user.save!
     user
   end
 
   def generate_otp
-    self.otp_code = SecureRandom.random_number(100_000..999_999) 
+    self.otp_code = SecureRandom.random_number(100_000..999_999)
     self.otp_expires_at = 1.minute.from_now
     Rails.logger.info "Generated OTP: #{otp_code}, Expires At: #{otp_expires_at}"
     save!
@@ -53,7 +53,7 @@ class User < ApplicationRecord
   end
 
   def clear_otp
-    update!(otp_code: nil, otp_expires_at: nil) 
+    update!(otp_code: nil, otp_expires_at: nil)
   end
 
   def oauth_login?
@@ -64,8 +64,8 @@ class User < ApplicationRecord
     user = User.find(user_id)
     user.addresses
   end
+
   def create_wallet
-    
     build_wallet(balance: 0.0).save
   end
 end

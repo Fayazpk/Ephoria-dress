@@ -563,7 +563,7 @@ DEPENDENCIES
   propshaft
   pry
   pry-rails
-  puma (>= 5.0)
+  puma (>= 6.5)
   rails (~> 8.0.0)
   razorpay (~> 3.2)
   rspec-rails (~> 6.0)

@@ -2,7 +2,7 @@ class Admin::UsersController < ApplicationController
   layout 'admin'
   before_action :require_admin
   before_action :set_user, only: [:show, :edit, :update, :destroy, :toggle_block]
-  
+
   def index
     @users = User.all.order(created_at: :desc)
   end
@@ -40,15 +40,14 @@ class Admin::UsersController < ApplicationController
     if @user
       @user.destroy
       flash[:notice] = "User was successfully deleted."
-      redirect_to admin_users_path
     else
       flash[:alert] = "User not found."
-      redirect_to admin_users_path
     end
+    redirect_to admin_users_path
   end
 
   def toggle_block
-    @user = User.find_by(id: params[:id]) 
+    @user = User.find_by(id: params[:id])
     if @user
       @user.update(is_blocked: !@user.is_blocked)
       status = @user.is_blocked ? 'blocked' : 'unblocked'
@@ -62,7 +61,7 @@ class Admin::UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.find(params[:id])  
+    @user = User.find(params[:id])
   end
 
   def user_params
@@ -70,8 +69,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def require_admin
-    unless current_user&.admin?
-      redirect_to root_path, alert: 'Access denied. Admin privileges required.'
-    end
+    redirect_to root_path, alert: 'Access denied. Admin privileges required.' unless current_user&.admin?
   end
 end

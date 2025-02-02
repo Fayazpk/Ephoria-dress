@@ -3,21 +3,21 @@ require 'rails_helper'
 RSpec.describe "admin/coupons/index", type: :view do
   before(:each) do
     assign(:admin_coupons, [
-      Admin::Coupon.create!(
-        code: "Code",
-        discount: "9.99",
-        description: "MyText",
-        max_usage: 2,
-        status: false
-      ),
-      Admin::Coupon.create!(
-        code: "Code",
-        discount: "9.99",
-        description: "MyText",
-        max_usage: 2,
-        status: false
-      )
-    ])
+             Admin::Coupon.create!(
+               code: "Code",
+               discount: "9.99",
+               description: "MyText",
+               max_usage: 2,
+               status: false
+             ),
+             Admin::Coupon.create!(
+               code: "Code",
+               discount: "9.99",
+               description: "MyText",
+               max_usage: 2,
+               status: false
+             )
+           ])
   end
 
   it "renders a list of admin/coupons" do

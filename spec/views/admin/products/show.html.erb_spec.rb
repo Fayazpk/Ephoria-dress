@@ -3,12 +3,12 @@ require 'rails_helper'
 RSpec.describe "admin/products/show", type: :view do
   before(:each) do
     assign(:admin_product, Admin::Product.create!(
-      name: "Name",
-      description: "Description",
-      category: nil,
-      subcategory: nil,
-      size: nil
-    ))
+                             name: "Name",
+                             description: "Description",
+                             category: nil,
+                             subcategory: nil,
+                             size: nil
+                           ))
   end
 
   it "renders attributes in <p>" do

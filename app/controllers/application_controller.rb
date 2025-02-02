@@ -1,12 +1,11 @@
 class ApplicationController < ActionController::Base
-
   allow_browser versions: :modern
-
 
   before_action :set_current_user
   helper_method :current_user, :user_signed_in?
 
   private
+
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
   end
@@ -18,7 +17,7 @@ class ApplicationController < ActionController::Base
   def user_signed_in?
     !!current_user
   end
-  helper_method :user_signed_in? 
+  helper_method :user_signed_in?
 
   def authenticate_user!
     unless user_signed_in?
@@ -37,7 +36,4 @@ class ApplicationController < ActionController::Base
     Current.user = nil
     reset_session
   end
-
-
-  
 end

@@ -3,14 +3,14 @@ require 'rails_helper'
 RSpec.describe "admin/addresses/show", type: :view do
   before(:each) do
     assign(:admin_address, Admin::Address.create!(
-      first_name: "First Name",
-      last_name: "Last Name",
-      user: nil,
-      building: "Building",
-      street: "Street",
-      city: nil,
-      phone: 2
-    ))
+                             first_name: "First Name",
+                             last_name: "Last Name",
+                             user: nil,
+                             building: "Building",
+                             street: "Street",
+                             city: nil,
+                             phone: 2
+                           ))
   end
 
   it "renders attributes in <p>" do

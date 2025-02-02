@@ -3,7 +3,7 @@ class Checkout < ApplicationRecord
   belongs_to :address
   belongs_to :user
   has_one :return_request, dependent: :destroy
-  has_many :order_items, dependent: :destroy 
+  has_many :order_items, dependent: :destroy
 
   attr_accessor :coupon_code
 
@@ -28,10 +28,10 @@ class Checkout < ApplicationRecord
 
   def create_razorpay_order
     return unless payment_method == 'razorpay'
-    
+
     begin
       order = Razorpay::Order.create(
-        amount: (total_price * 100).to_i, 
+        amount: (total_price * 100).to_i,
         currency: 'INR',
         receipt: "checkout_#{id}",
         payment_capture: 1,
@@ -40,12 +40,12 @@ class Checkout < ApplicationRecord
           user_id: user_id
         }
       )
-      
+
       update(
         razorpay_order_id: order.id,
         payment_status: 'pending'
       )
-      
+
       order
     rescue Razorpay::Error => e
       errors.add(:base, "Razorpay error: #{e.message}")
@@ -57,22 +57,22 @@ class Checkout < ApplicationRecord
   def verify_razorpay_payment(payment_params)
     return false unless payment_method == 'razorpay'
     return false if payment_params.values.any?(&:blank?)
-  
+
     begin
       Rails.logger.info "Starting Razorpay payment verification"
       Rails.logger.info "Payment params: #{payment_params.inspect}"
-  
-      
+
+
       payment_verification = {
         razorpay_order_id: payment_params['razorpay_order_id'],
         razorpay_payment_id: payment_params['razorpay_payment_id'],
         razorpay_signature: payment_params['razorpay_signature']
       }
-  
+
       # Verify the payment signature
       if Razorpay::Utility.verify_payment_signature(payment_verification)
         Rails.logger.info "Payment signature verified successfully"
-        
+
         ActiveRecord::Base.transaction do
           update!(
             payment_status: 'completed',
@@ -82,7 +82,7 @@ class Checkout < ApplicationRecord
           )
           process_successful_payment
         end
-        
+
         true
       else
         Rails.logger.error "Payment signature verification failed"
@@ -101,19 +101,19 @@ class Checkout < ApplicationRecord
       false
     end
   end
- def can_return?
-  status == 'delivered' && 
-  #delivered_at.present? && 
-  #delivered_at >= 7.days.ago && 
-  return_request.nil?
-end
 
+  def can_return?
+    status == 'delivered' &&
+      # delivered_at.present? &&
+      # delivered_at >= 7.days.ago &&
+      return_request.nil?
+  end
 
   def apply_coupon(code)
     return false if code.blank?
 
     coupon = Coupon.find_by(code: code.upcase)
-    
+
     if coupon.nil?
       errors.add(:coupon_code, "Invalid coupon code")
       return false
@@ -145,37 +145,36 @@ end
     calculate_total_price
     save
   end
+
   private
 
-   def validate_coupon
+  def validate_coupon
     return unless coupon_code.present?
-    
+
     coupon = Coupon.find_by(code: coupon_code.upcase)
     return errors.add(:coupon_code, "Invalid coupon code") unless coupon
-    
+
     errors.add(:coupon_code, "Coupon is inactive") unless coupon.status
     errors.add(:coupon_code, "Coupon has expired") if coupon.valid_until && coupon.valid_until < Date.current
     errors.add(:coupon_code, "Coupon is not yet valid") if coupon.valid_from && coupon.valid_from > Date.current
   end
+
   def process_successful_payment
     ActiveRecord::Base.transaction do
-
       save!
-      
+
       if cart.present?
-  
+
         user_ref = cart.user
-        
- 
+
+
         cart.orderables.destroy_all
-        
-        
+
+
         cart.update!(status: "processed") if cart.respond_to?(:status)
-        
-       
-        if user_ref.present? && user_ref.cart.nil?
-          Cart.create!(user: user_ref)
-        end
+
+
+        Cart.create!(user: user_ref) if user_ref.present? && user_ref.cart.nil?
       end
     end
   end
@@ -212,9 +211,8 @@ end
 
   def address_belongs_to_user
     return unless address_id
-    unless cart&.user&.addresses&.exists?(address_id)
-      errors.add(:address_id, "is not valid")
-    end
+
+    errors.add(:address_id, "is not valid") unless cart&.user&.addresses&.exists?(address_id)
   end
 
   def normalize_payment_method
@@ -228,11 +226,9 @@ end
       discounted_price * orderable.quantity
     end
 
-    if coupon_code.present?
-      if coupon = Coupon.find_by(code: coupon_code.upcase)
-        discount_amount = (subtotal * coupon.discount / 100.0)
-        subtotal -= discount_amount
-      end
+    if coupon_code.present? && coupon = Coupon.find_by(code: coupon_code.upcase)
+      discount_amount = (subtotal * coupon.discount / 100.0)
+      subtotal -= discount_amount
     end
 
     tax = subtotal * 0.10
@@ -255,5 +251,4 @@ end
 
   def notify_user_of_shipping
   end
-
 end

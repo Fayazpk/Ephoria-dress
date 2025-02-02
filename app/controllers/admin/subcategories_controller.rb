@@ -4,10 +4,8 @@ class Admin::SubcategoriesController < ApplicationController
 
 
   def index
-    
     @admin_subcategories = Subcategory.all
   end
-
 
   def show
   end
@@ -19,7 +17,6 @@ class Admin::SubcategoriesController < ApplicationController
 
   def edit
   end
-
 
   def create
     @admin_subcategory = Subcategory.new(admin_subcategory_params)
@@ -36,7 +33,6 @@ class Admin::SubcategoriesController < ApplicationController
     end
   end
 
-
   def update
     respond_to do |format|
       if @admin_subcategory.update(subcategory_params)
@@ -48,7 +44,6 @@ class Admin::SubcategoriesController < ApplicationController
       end
     end
   end
-
 
   def destroy
     if @admin_subcategory.destroy
@@ -72,7 +67,6 @@ class Admin::SubcategoriesController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     redirect_to admin_subcategories_path, alert: "Subcategory not found."
   end
-
 
   def admin_subcategory_params
     params.require(:subcategory).permit(:name, :description, :category_id, :image)

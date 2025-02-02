@@ -17,7 +17,7 @@ class Admin::CouponsController < ApplicationController
   end
 
   def create
-    @admin_coupon = Coupon.new(coupon_params)  
+    @admin_coupon = Coupon.new(coupon_params)
 
     respond_to do |format|
       if @admin_coupon.save
@@ -32,7 +32,7 @@ class Admin::CouponsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @admin_coupon.update(coupon_params)  
+      if @admin_coupon.update(coupon_params)
         format.html { redirect_to admin_coupon_path(@admin_coupon), notice: "Coupon was successfully updated." }
         format.json { render :show, status: :ok, location: @admin_coupon }
       else
@@ -52,11 +52,12 @@ class Admin::CouponsController < ApplicationController
   end
 
   private
-    def set_admin_coupon
-      @admin_coupon = Coupon.find(params[:id])  
-    end
 
-    def coupon_params 
-      params.require(:coupon).permit(:code, :discount, :description, :valid_from, :valid_until, :max_usage, :status)
-    end
+  def set_admin_coupon
+    @admin_coupon = Coupon.find(params[:id])
+  end
+
+  def coupon_params
+    params.require(:coupon).permit(:code, :discount, :description, :valid_from, :valid_until, :max_usage, :status)
+  end
 end

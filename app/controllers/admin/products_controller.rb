@@ -4,14 +4,13 @@ class Admin::ProductsController < ApplicationController
   before_action :load_categories_and_subcategories, only: %i[new edit create update]
 
   def index
-  
     @products = Product.order(created_at: :desc)
   end
 
   def new
     @product = Product.new
     variant = @product.product_variants.build
-   
+
     Size.all.each do |size|
       variant.product_variant_sizes.build(size: size)
     end
@@ -21,12 +20,12 @@ class Admin::ProductsController < ApplicationController
     @product = Product.new(product_params)
 
     if @product.save
-    
+
       process_images if params[:product][:images].present?
 
       redirect_to admin_products_path(@product), notice: "Product created successfully."
     else
-    
+
       variant = @product.product_variants.first || @product.product_variants.build
       Size.all.each do |size|
         variant.product_variant_sizes.find_or_initialize_by(size: size)
@@ -45,11 +44,10 @@ class Admin::ProductsController < ApplicationController
   end
 
   def update
-   
     delete_images if params[:product][:delete_images].present?
 
     if @product.update(product_params)
-     
+
       process_images if params[:product][:images].present?
 
       redirect_to admin_product_path(@product), notice: "Product was successfully updated."
@@ -90,12 +88,12 @@ class Admin::ProductsController < ApplicationController
       product_variants_attributes: [
         :id,
         :_destroy,
-        product_variant_sizes_attributes: [
+        { product_variant_sizes_attributes: [
           :id,
           :size_id,
           :stock,
           :_destroy
-        ]
+        ] }
       ]
     )
   end
@@ -104,10 +102,9 @@ class Admin::ProductsController < ApplicationController
     return unless params[:product][:images].present?
 
     params[:product][:images].each do |image|
-      
       next unless image.content_type.start_with?("image/")
 
- 
+
 
       @product.images.attach(image)
     end
@@ -124,7 +121,6 @@ class Admin::ProductsController < ApplicationController
     end
   end
 
- 
   def validate_images
     return true if params[:product][:images].nil?
 
@@ -150,6 +146,4 @@ class Admin::ProductsController < ApplicationController
 
     valid
   end
-
-
 end

@@ -6,7 +6,4 @@ class Subcategory < ApplicationRecord
   validates :name, presence: { message: "is required" }
   validates :category, presence: { message: "must be selected" }
   validates :image, presence: { message: "must have at least one image" }
-
-
-  
 end

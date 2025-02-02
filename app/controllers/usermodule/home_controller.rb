@@ -9,4 +9,4 @@ module Usermodule
       @banners = Banner.all
     end
   end
-end 
+end

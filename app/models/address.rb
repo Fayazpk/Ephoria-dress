@@ -19,9 +19,8 @@ class Address < ApplicationRecord
     ].compact.join(", ")
   end
 
-
   before_save :sync_location_names
-  
+
   private
 
   def sync_location_names

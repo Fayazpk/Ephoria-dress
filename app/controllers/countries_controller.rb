@@ -1,5 +1,5 @@
 class CountriesController < ApplicationController
-    def index
-        render :json => State.(params[:country])
-    end
+  def index
+    render json: State.call(params[:country])
+  end
 end

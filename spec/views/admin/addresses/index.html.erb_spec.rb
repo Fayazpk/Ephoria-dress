@@ -3,25 +3,25 @@ require 'rails_helper'
 RSpec.describe "admin/addresses/index", type: :view do
   before(:each) do
     assign(:admin_addresses, [
-      Admin::Address.create!(
-        first_name: "First Name",
-        last_name: "Last Name",
-        user: nil,
-        building: "Building",
-        street: "Street",
-        city: nil,
-        phone: 2
-      ),
-      Admin::Address.create!(
-        first_name: "First Name",
-        last_name: "Last Name",
-        user: nil,
-        building: "Building",
-        street: "Street",
-        city: nil,
-        phone: 2
-      )
-    ])
+             Admin::Address.create!(
+               first_name: "First Name",
+               last_name: "Last Name",
+               user: nil,
+               building: "Building",
+               street: "Street",
+               city: nil,
+               phone: 2
+             ),
+             Admin::Address.create!(
+               first_name: "First Name",
+               last_name: "Last Name",
+               user: nil,
+               building: "Building",
+               street: "Street",
+               city: nil,
+               phone: 2
+             )
+           ])
   end
 
   it "renders a list of admin/addresses" do

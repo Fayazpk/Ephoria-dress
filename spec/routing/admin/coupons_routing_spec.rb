@@ -18,7 +18,6 @@ RSpec.describe CouponsController, type: :routing do
       expect(get: "/admin/coupons/1/edit").to route_to("admin/coupons#edit", id: "1")
     end
 
-
     it "routes to #create" do
       expect(post: "/admin/coupons").to route_to("admin/coupons#create")
     end

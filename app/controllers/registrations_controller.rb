@@ -20,7 +20,7 @@ class RegistrationsController < ApplicationController
       render :new
     end
   end
-  
+
   def verify_otp
     if request.post?
       handle_otp_submission

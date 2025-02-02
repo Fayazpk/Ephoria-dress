@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "admin/products/edit", type: :view do
-  let(:admin_product) {
+  let(:admin_product) do
     Admin::Product.create!(
       name: "MyString",
       description: "MyString",
@@ -9,7 +9,7 @@ RSpec.describe "admin/products/edit", type: :view do
       subcategory: nil,
       size: nil
     )
-  }
+  end
 
   before(:each) do
     assign(:admin_product, admin_product)
@@ -19,7 +19,6 @@ RSpec.describe "admin/products/edit", type: :view do
     render
 
     assert_select "form[action=?][method=?]", admin_product_path(admin_product), "post" do
-
       assert_select "input[name=?]", "admin_product[name]"
 
       assert_select "input[name=?]", "admin_product[description]"

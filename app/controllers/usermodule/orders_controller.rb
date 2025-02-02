@@ -18,9 +18,7 @@ module Usermodule
     end
 
     def update_address
-      if @order.status == "shipped"
-        return redirect_to usermodule_orders_path(@order), alert: "Cannot modify shipped order"
-      end
+      return redirect_to usermodule_orders_path(@order), alert: "Cannot modify shipped order" if @order.status == "shipped"
 
       if @order.address.update(address_params)
         redirect_to usermodule_orders_path(@order), notice: "Address updated successfully"
@@ -43,19 +41,19 @@ module Usermodule
 
     def download_invoice
       @checkout = Checkout.find_by(id: params[:id], user_id: current_user.id)
-      
+
       if @checkout.nil?
         redirect_to orders_path, alert: "Invoice not found."
         return
       end
-    
+
       respond_to do |format|
-        format.html 
+        format.html
         format.pdf do
           render pdf: "invoice_#{@checkout.id}",
                  template: "usermodule/orders/invoice",
                  layout: "pdf",
-                 disposition: "attachment" 
+                 disposition: "attachment"
         end
       end
     end
@@ -83,9 +81,8 @@ module Usermodule
     private
 
     def process_payment(checkout)
-      
-      Razorpay.setup(ENV['RAZORPAY_KEY_ID'], ENV['RAZORPAY_KEY_SECRET'])
- 
+      Razorpay.setup(ENV.fetch('RAZORPAY_KEY_ID', nil), ENV.fetch('RAZORPAY_KEY_SECRET', nil))
+
       payment_response = Razorpay::Order.create(amount: checkout.total_amount, currency: 'INR', receipt: checkout.id)
 
       payment_response['status'] == 'created' # This is a placeholder; implement actual payment logic

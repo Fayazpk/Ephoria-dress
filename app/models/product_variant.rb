@@ -5,7 +5,6 @@ class ProductVariant < ApplicationRecord
   has_many :sizes, through: :product_variant_sizes
   accepts_nested_attributes_for :product_variant_sizes, allow_destroy: true
 
-
   def stock_for_size(size)
     size_string = size.to_s.strip.upcase
 

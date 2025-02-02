@@ -13,17 +13,16 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/admin/categories", type: :request do
-  
   # This should return the minimal set of attributes required to create a valid
   # Admin::Category. As you add validations to Admin::Category, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
+  let(:valid_attributes) do
     skip("Add a hash of attributes valid for your model")
-  }
+  end
 
-  let(:invalid_attributes) {
+  let(:invalid_attributes) do
     skip("Add a hash of attributes invalid for your model")
-  }
+  end
 
   describe "GET /index" do
     it "renders a successful response" do
@@ -59,9 +58,9 @@ RSpec.describe "/admin/categories", type: :request do
   describe "POST /create" do
     context "with valid parameters" do
       it "creates a new Admin::Category" do
-        expect {
+        expect do
           post admin_categories_url, params: { admin_category: valid_attributes }
-        }.to change(Admin::Category, :count).by(1)
+        end.to change(Admin::Category, :count).by(1)
       end
 
       it "redirects to the created admin_category" do
@@ -72,25 +71,24 @@ RSpec.describe "/admin/categories", type: :request do
 
     context "with invalid parameters" do
       it "does not create a new Admin::Category" do
-        expect {
+        expect do
           post admin_categories_url, params: { admin_category: invalid_attributes }
-        }.to change(Admin::Category, :count).by(0)
+        end.to change(Admin::Category, :count).by(0)
       end
 
-    
+
       it "renders a response with 422 status (i.e. to display the 'new' template)" do
         post admin_categories_url, params: { admin_category: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_entity)
       end
-    
     end
   end
 
   describe "PATCH /update" do
     context "with valid parameters" do
-      let(:new_attributes) {
+      let(:new_attributes) do
         skip("Add a hash of attributes valid for your model")
-      }
+      end
 
       it "updates the requested admin_category" do
         category = Admin::Category.create! valid_attributes
@@ -108,22 +106,20 @@ RSpec.describe "/admin/categories", type: :request do
     end
 
     context "with invalid parameters" do
-    
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
         category = Admin::Category.create! valid_attributes
         patch admin_category_url(category), params: { admin_category: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_entity)
       end
-    
     end
   end
 
   describe "DELETE /destroy" do
     it "destroys the requested admin_category" do
       category = Admin::Category.create! valid_attributes
-      expect {
+      expect do
         delete admin_category_url(category)
-      }.to change(Admin::Category, :count).by(-1)
+      end.to change(Admin::Category, :count).by(-1)
     end
 
     it "redirects to the admin_categories list" do

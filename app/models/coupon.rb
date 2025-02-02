@@ -11,8 +11,6 @@ class Coupon < ApplicationRecord
   private
 
   def validity_dates
-    if valid_from && valid_until && valid_from > valid_until
-      errors.add(:valid_until, "must be after the valid from date")
-    end
+    errors.add(:valid_until, "must be after the valid from date") if valid_from && valid_until && valid_from > valid_until
   end
 end

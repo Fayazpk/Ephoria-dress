@@ -3,12 +3,12 @@ require 'rails_helper'
 RSpec.describe "admin/coupons/show", type: :view do
   before(:each) do
     assign(:admin_coupon, Admin::Coupon.create!(
-      code: "Code",
-      discount: "9.99",
-      description: "MyText",
-      max_usage: 2,
-      status: false
-    ))
+                            code: "Code",
+                            discount: "9.99",
+                            description: "MyText",
+                            max_usage: 2,
+                            status: false
+                          ))
   end
 
   it "renders attributes in <p>" do

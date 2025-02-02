@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe "admin/categories/show", type: :view do
   before(:each) do
     assign(:admin_category, Admin::Category.create!(
-      name: "Name",
-      description: "MyText"
-    ))
+                              name: "Name",
+                              description: "MyText"
+                            ))
   end
 
   it "renders attributes in <p>" do

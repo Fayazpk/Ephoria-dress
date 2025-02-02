@@ -20,11 +20,13 @@ class Product < ApplicationRecord
   validates :subcategory, presence: { message: "must be selected" }
   validates :images, presence: { message: "must have at least one image" }
 
-  
+
   def final_price
     return base_price unless discount_percentage.present? && discount_percentage > 0
-    base_price * (1 - discount_percentage / 100.0)
+
+    base_price * (1 - (discount_percentage / 100.0))
   end
+
   def create_variant
     variant = product_variants.create
     Size.all.each do |size|

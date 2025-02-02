@@ -2,17 +2,17 @@ module Admin
   class OrdersController < ApplicationController
     layout "admin"
 
-    
+
     before_action :set_order, only: [:show, :update, :cancel, :edit_address, :approve_return, :reject_return]
     def index
       @orders = Checkout.includes(:user, :address, :return_request)
-                       .order(created_at: :desc)
-                       .page(params[:page])
-                       .per(20)
+                        .order(created_at: :desc)
+                        .page(params[:page])
+                        .per(20)
 
-                       
 
-      @orders = filter_orders(@orders) 
+
+      @orders = filter_orders(@orders)
     end
 
     def show
@@ -72,15 +72,15 @@ module Admin
 
     def approve_return
       @return_request = @order.return_request
-      
+
       if @return_request&.pending?
         ActiveRecord::Base.transaction do
           @return_request.update!(status: 'approved')
-          
-         
+
+
           wallet = @order.user.wallet
           refund_amount = @order.total_price
-          
+
           if wallet.add_money(refund_amount, "Refund for order ##{@order.id}")
             @return_request.update!(status: 'completed')
             redirect_to admin_orders_path, notice: 'Return request approved and amount refunded'
@@ -93,10 +93,10 @@ module Admin
         redirect_to admin_orders_path, alert: 'Invalid return request'
       end
     end
-    
+
     def reject_return
       @return_request = @order.return_request
-      
+
       if @return_request&.pending? && @return_request.update(status: 'rejected')
         redirect_to admin_orders_path, notice: 'Return request rejected'
       else
@@ -106,15 +106,15 @@ module Admin
 
     def approve_return
       @return_request = @order.return_request
-      
+
       if @return_request&.pending?
         ActiveRecord::Base.transaction do
           @return_request.update!(status: 'approved')
-          
+
           # Refund amount to user's wallet
           wallet = @order.user.wallet
           refund_amount = @order.total_price
-          
+
           if wallet.add_money(refund_amount, "Refund for order ##{@order.id}")
             @return_request.update!(status: 'completed')
             redirect_to admin_orders_path, notice: 'Return request approved and amount refunded'
@@ -130,7 +130,7 @@ module Admin
 
     def reject_return
       @return_request = @order.return_request
-      
+
       if @return_request&.pending? && @return_request.update(status: 'rejected')
         redirect_to admin_orders_path, notice: 'Return request rejected'
       else
@@ -143,6 +143,7 @@ module Admin
     def set_order
       @order = Checkout.find(params[:id])
     end
+
     def filter_orders(orders)
       orders = case params[:filter_status]
                when "pending"
@@ -172,28 +173,26 @@ module Admin
                  orders
                end
 
-      
-      orders = case params[:return_status]
-               when "pending"
-                 orders.joins(:return_request).where(return_requests: { status: "pending" })
-               when "approved"
-                 orders.joins(:return_request).where(return_requests: { status: "approved" })
-               when "rejected"
-                 orders.joins(:return_request).where(return_requests: { status: "rejected" })
-               when "completed"
-                 orders.joins(:return_request).where(return_requests: { status: "completed" })
-               else
-                 orders
-               end
 
-      orders
+      case params[:return_status]
+      when "pending"
+        orders.joins(:return_request).where(return_requests: { status: "pending" })
+      when "approved"
+        orders.joins(:return_request).where(return_requests: { status: "approved" })
+      when "rejected"
+        orders.joins(:return_request).where(return_requests: { status: "rejected" })
+      when "completed"
+        orders.joins(:return_request).where(return_requests: { status: "completed" })
+      else
+        orders
+      end
     end
 
     def valid_status_transition?(current_status, new_status)
       transitions = {
-        "pending" => [ "processing", "cancelled" ],
-        "processing" => [ "shipped", "cancelled" ],
-        "shipped" => [ "delivered", "cancelled" ],
+        "pending" => ["processing", "cancelled"],
+        "processing" => ["shipped", "cancelled"],
+        "shipped" => ["delivered", "cancelled"],
         "delivered" => [],
         "cancelled" => []
       }
@@ -201,9 +200,7 @@ module Admin
     end
 
     def process_status_update
-      if params[:status] == "delivered" && @order.payment_method == "cod"
-        @order.update_column(:payment_status, "completed")
-      end
+      @order.update_column(:payment_status, "completed") if params[:status] == "delivered" && @order.payment_method == "cod"
     end
 
     def address_params

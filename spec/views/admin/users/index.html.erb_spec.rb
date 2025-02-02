@@ -3,17 +3,17 @@ require 'rails_helper'
 RSpec.describe "admin/users/index", type: :view do
   before(:each) do
     assign(:admin_users, [
-      Admin::User.create!(
-        email: "Email",
-        password_digest: "Password Digest",
-        is_blocked: false
-      ),
-      Admin::User.create!(
-        email: "Email",
-        password_digest: "Password Digest",
-        is_blocked: false
-      )
-    ])
+             Admin::User.create!(
+               email: "Email",
+               password_digest: "Password Digest",
+               is_blocked: false
+             ),
+             Admin::User.create!(
+               email: "Email",
+               password_digest: "Password Digest",
+               is_blocked: false
+             )
+           ])
   end
 
   it "renders a list of admin/users" do

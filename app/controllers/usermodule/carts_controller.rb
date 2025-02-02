@@ -27,11 +27,9 @@ class Usermodule::CartsController < ApplicationController
     variant_size = ProductVariantSize.lock.find_by(product_variant_id: @variant.id, size_id: size_record.id)
     return render_error("Size not available for this variant", :unprocessable_entity) unless variant_size
 
-    if variant_size.stock.nil? || variant_size.stock <= 0
-      return render_error("Out of stock", :unprocessable_entity)
-    end
+    return render_error("Out of stock", :unprocessable_entity) if variant_size.stock.nil? || variant_size.stock <= 0
 
-    quantity = [ params[:quantity].to_i, 1 ].max
+    quantity = [params[:quantity].to_i, 1].max
     return render_error("Requested quantity not available", :unprocessable_entity) if variant_size.stock < quantity
 
     ActiveRecord::Base.transaction do
@@ -81,7 +79,7 @@ class Usermodule::CartsController < ApplicationController
   end
 
   def find_size(size_param)
-    sizes_to_try = [ size_param, size_param.downcase, size_param.upcase ].compact
+    sizes_to_try = [size_param, size_param.downcase, size_param.upcase].compact
     Rails.logger.debug "Trying sizes: #{sizes_to_try.inspect}"
     Size.where(size: sizes_to_try).first
   end

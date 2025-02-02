@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "admin/coupons/edit", type: :view do
-  let(:admin_coupon) {
+  let(:admin_coupon) do
     Admin::Coupon.create!(
       code: "MyString",
       discount: "9.99",
@@ -9,7 +9,7 @@ RSpec.describe "admin/coupons/edit", type: :view do
       max_usage: 1,
       status: false
     )
-  }
+  end
 
   before(:each) do
     assign(:admin_coupon, admin_coupon)
@@ -19,7 +19,6 @@ RSpec.describe "admin/coupons/edit", type: :view do
     render
 
     assert_select "form[action=?][method=?]", admin_coupon_path(admin_coupon), "post" do
-
       assert_select "input[name=?]", "admin_coupon[code]"
 
       assert_select "input[name=?]", "admin_coupon[discount]"

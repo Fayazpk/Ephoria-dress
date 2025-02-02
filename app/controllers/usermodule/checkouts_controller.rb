@@ -38,37 +38,36 @@ module Usermodule
       rescue StandardError => e
         handle_checkout_error(e)
       end
-      
     end
 
     def show
       @order = current_user.checkouts.find(params[:id])
       @checkout = current_user.checkouts.find(params[:id])
-    rescue ActiveRecord::RecordNotFound => e
+    rescue ActiveRecord::RecordNotFound
       redirect_with_error('Checkout not found', usermodule_cart_path)
     end
 
     def razorpay_callback
       Rails.logger.info "Received Razorpay callback for checkout: #{@checkout.id}"
-      
+
       begin
         payment_data = {
           'razorpay_payment_id' => params.dig(:checkout, :razorpay_payment_id),
           'razorpay_order_id' => params.dig(:checkout, :razorpay_order_id),
           'razorpay_signature' => params.dig(:checkout, :razorpay_signature)
         }
-    
+
         Rails.logger.debug("Received Razorpay callback params: #{payment_data.inspect}")
-    
+
         if payment_data.values.any?(&:blank?)
-          missing = payment_data.select { |k, v| v.blank? }.keys
+          missing = payment_data.select { |_k, v| v.blank? }.keys
           Rails.logger.error "Missing Razorpay parameters: #{missing.join(', ')}"
-          return render json: { 
-            success: false, 
-            error: "Missing required parameters: #{missing.join(', ')}" 
+          return render json: {
+            success: false,
+            error: "Missing required parameters: #{missing.join(', ')}"
           }, status: :unprocessable_entity
         end
-    
+
         if @checkout.verify_razorpay_payment(payment_data)
           Rails.logger.info "Payment verification successful for checkout: #{@checkout.id}"
           clear_cart
@@ -100,12 +99,12 @@ module Usermodule
       @subtotal = @cart.orderables.sum { |orderable| calculate_orderable_price(orderable) }
       @tax = (@subtotal * 0.1).round(2)
       @shipping = 10.0
-    
+
       coupon_code = params[:coupon_code]
-      
+
       begin
         discount = calculate_coupon_discount(coupon_code)
-        
+
         if discount > 0
           render json: {
             success: true,
@@ -131,26 +130,26 @@ module Usermodule
 
 
     private
-def save_order
-  @cart.orderables.each do |orderable|
-    @checkout.order_items.create!(
-      product_id: orderable.product_id,
-      product_variant_id: orderable.product_variant_id,
-      quantity: orderable.quantity,
-      unit_price: orderable.product.final_price,
-      total: orderable.total,
-      size: orderable.size
-    )
-  end
-end
+
+    def save_order
+      @cart.orderables.each do |orderable|
+        @checkout.order_items.create!(
+          product_id: orderable.product_id,
+          product_variant_id: orderable.product_variant_id,
+          quantity: orderable.quantity,
+          unit_price: orderable.product.final_price,
+          total: orderable.total,
+          size: orderable.size
+        )
+      end
+    end
+
     def handle_wallet_payment
       begin
         ActiveRecord::Base.transaction do
           wallet = current_user.wallet
-          
-          unless wallet.balance >= @total
-            raise InsufficientBalanceError, "Insufficient wallet balance"
-          end
+
+          raise InsufficientBalanceError, "Insufficient wallet balance" unless wallet.balance >= @total
 
           wallet_transaction = wallet.wallet_transactions.build(
             amount: @total,
@@ -162,7 +161,7 @@ end
 
           if wallet_transaction.save
             wallet.update!(balance: wallet_transaction.balance_after)
-            
+
             @checkout.update!(
               payment_status: 'completed',
               status: 'processing',
@@ -236,7 +235,7 @@ end
       raise 'Invalid payment method' unless valid_payment_method?
 
       payment_status = checkout_params[:payment_method] == 'wallet' ? 'completed' : 'pending'
-      
+
       @checkout.update!(
         payment_status: payment_status,
         status: 'processing',
@@ -284,24 +283,23 @@ end
       return 0 unless orderable.product
 
       product = orderable.product
-      price = (product.base_price * (1 - product.discount_percentage / 100.0)).round(2)
+      price = (product.base_price * (1 - (product.discount_percentage / 100.0))).round(2)
       (price * orderable.quantity).round(2)
     end
 
     def calculate_coupon_discount(code)
       return 0 unless code.present?
-    
+
       coupon = Coupon.find_by(code: code.upcase, status: true)
-    
-      if coupon && 
-         coupon.valid_from <= Date.current && 
+
+      if coupon &&
+         coupon.valid_from <= Date.current &&
          coupon.valid_until >= Date.current
         (@subtotal * (coupon.discount / 100.0)).round(2)
       else
         0
       end
     end
-    
 
     def calculate_final_total
       @total ||= 0

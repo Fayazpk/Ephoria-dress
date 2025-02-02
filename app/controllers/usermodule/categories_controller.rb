@@ -10,4 +10,4 @@ module Usermodule
       @category = Category.find(params[:id])
     end
   end
-end 
+end

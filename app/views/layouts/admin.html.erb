@@ -4,153 +4,238 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= yield :title %></title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <style>
-        /* Your sidebar styles here */
         :root {
             --primary-color: #6a11cb;
             --secondary-color: #2575fc;
             --light-bg: #f4f7fa;
+            --sidebar-width: 250px;
+            --sidebar-width-collapsed: 70px;
+            --header-height: 60px;
         }
 
         body {
             background-color: var(--light-bg);
             font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* Improved Sidebar */
         .sidebar {
             height: 100vh;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding-top: 20px;
             position: fixed;
             left: 0;
             top: 0;
-            width: 250px;
+            width: var(--sidebar-width);
             transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
 
-        .sidebar .nav-link {
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+        }
+
+        .sidebar-header {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-link {
             color: rgba(255,255,255,0.7);
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            transition: all 0.3s ease;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
-        .sidebar .nav-link:hover {
-            background-color: rgba(255,255,255,0.1);
+        .nav-link:hover, .nav-link.active {
             color: white;
+            background-color: rgba(255,255,255,0.1);
+            border-left: 4px solid white;
         }
 
-        .sidebar .nav-link i {
-            margin-right: 15px;
-            width: 25px;
+        .nav-link i {
+            width: 20px;
+            margin-right: 1rem;
             text-align: center;
         }
 
+        /* Content Area */
         .content-wrapper {
-            margin-left: 250px;
-            padding: 20px;
+            margin-left: var(--sidebar-width);
             transition: all 0.3s;
+            min-height: 100vh;
+            padding-top: var(--header-height);
         }
 
+        .content-wrapper.expanded {
+            margin-left: var(--sidebar-width-collapsed);
+        }
+
+        /* Top Header */
         .top-header {
             background-color: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            padding: 15px 20px;
-            margin-bottom: 20px;
+            padding: 0 1.5rem;
+            height: var(--header-height);
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: var(--sidebar-width);
+            z-index: 999;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        /* DataTables Custom Styles */
-        .dataTables_wrapper .dataTables_length select {
-            width: auto;
-            display: inline-block;
-            padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+        .top-header.expanded {
+            left: var(--sidebar-width-collapsed);
         }
 
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .content-wrapper {
+                margin-left: 0;
+            }
+
+            .top-header {
+                left: 0;
+            }
+        }
+
+        /* DataTables Enhancements */
+        .dataTables_wrapper .dataTables_length select,
         .dataTables_wrapper .dataTables_filter input {
-            margin-left: 0.5em;
-            display: inline-block;
-            width: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
             padding: 0.375rem 0.75rem;
         }
 
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            padding: 0.5em 1em;
-        }
-
-        .dataTables_wrapper .dataTables_info {
-            padding-top: 0.85em;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
             background: var(--primary-color);
             color: white !important;
             border: 1px solid var(--primary-color);
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-            background: var(--secondary-color);
-            color: white !important;
-            border: 1px solid var(--secondary-color);
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
     <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="text-center mb-4">
-            <h3 class="text-white">Admin Panel</h3>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3 class="mb-0">Admin</h3>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
-        <nav class="nav flex-column">
-            <%= link_to admin_dashboard_path, class: "nav-link" do %><i class="fas fa-chart-pie"></i>Dashboard<% end %>
+        <nav class="nav flex-column mt-3">
+        <%= link_to admin_dashboard_path, class: "nav-link" do %><i class="fas fa-chart-pie"></i>Dashboard<% end %>
             <%= link_to admin_products_path, class: "nav-link" do %><i class="fas fa-box"></i> Products<% end %>
             <%= link_to admin_categories_path, class: "nav-link" do %><i class="fas fa-tags"></i> Categories<% end %>
             <%= link_to admin_subcategories_path, class: "nav-link" do %><i class="fas fa-tags"></i> Subcategories<% end %>
             <%= link_to admin_orders_path, class: "nav-link" do %><i class="fas fa-shopping-cart"></i> Orders<% end %>
-             
-             <%= link_to admin_coupons_path, class: "nav-link" do %><i class="fas fa-ticket-alt"></i> Coupons<% end %>
-            
+            <%= link_to admin_coupons_path, class: "nav-link" do %><i class="fas fa-ticket-alt"></i> Coupons<% end %>
             <%= link_to admin_users_path, class: "nav-link" do %><i class="fas fa-users"></i> Users<% end %>
             <%= link_to admin_banners_path, class: "nav-link" do %><i class="fas fa-image"></i> Banners<% end %>
             <a class="nav-link" href="#settings"><i class="fas fa-cog"></i> Settings</a>
+            
         </nav>
     </div>
 
+    <!-- Top Header -->
+    <header class="top-header" id="topHeader">
+        <div class="d-flex align-items-center">
+            <button class="btn d-md-none me-2" id="mobileSidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h4 class="mb-0"><%= yield :page_title %></h4>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="dropdown">
+                <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle me-2"></i>
+                    <span>Admin</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><hr class="dropdown-divider"></li>
+                   
+                </ul>
+            </div>
+        </div>
+    </header>
+
     <!-- Content Wrapper -->
-    <div class="content-wrapper">
-        <%= yield %>
-        <%= yield :scripts %>
+    <div class="content-wrapper" id="contentWrapper">
+        <div class="container-fluid py-4">
+            <%= yield %>
+        </div>
     </div>
 
-    <!-- jQuery -->
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     <%= javascript_include_tag "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js" %>
-  <%= javascript_include_tag "https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" %>
-  <%= javascript_include_tag "https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js" %>
-  <%= stylesheet_link_tag "https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" %>
-  <%= stylesheet_link_tag 'application' %>
     <%= javascript_include_tag 'application' %>
 
-    <!-- Initialize DataTables -->
     <script>
-        $(document).ready(function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar Toggle Functionality
+            const sidebar = document.getElementById('sidebar');
+            const contentWrapper = document.getElementById('contentWrapper');
+            const topHeader = document.getElementById('topHeader');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('collapsed');
+                contentWrapper.classList.toggle('expanded');
+                topHeader.classList.toggle('expanded');
+            }
+
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            mobileSidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+
+            // Initialize DataTables
             $('.table').DataTable({
                 responsive: true,
                 pageLength: 10,
@@ -166,13 +251,21 @@
                     }
                 },
                 columnDefs: [
-                    { orderable: false, targets: -1 } // Disable sorting on last column (actions)
+                    { orderable: false, targets: -1 }
                 ],
-                order: [[0, 'asc']], // Sort by first column by default
+                order: [[0, 'asc']],
                 drawCallback: function(settings) {
-                    // Reinitialize any Bootstrap tooltips or popovers after table redraw
                     $('[data-bs-toggle="tooltip"]').tooltip();
                     $('[data-bs-toggle="popover"]').popover();
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('collapsed');
+                    contentWrapper.classList.remove('expanded');
+                    topHeader.classList.remove('expanded');
                 }
             });
         });

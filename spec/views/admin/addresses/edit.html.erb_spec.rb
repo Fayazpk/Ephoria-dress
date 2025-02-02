@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "admin/addresses/edit", type: :view do
-  let(:admin_address) {
+  let(:admin_address) do
     Admin::Address.create!(
       first_name: "MyString",
       last_name: "MyString",
@@ -11,7 +11,7 @@ RSpec.describe "admin/addresses/edit", type: :view do
       city: nil,
       phone: 1
     )
-  }
+  end
 
   before(:each) do
     assign(:admin_address, admin_address)
@@ -21,7 +21,6 @@ RSpec.describe "admin/addresses/edit", type: :view do
     render
 
     assert_select "form[action=?][method=?]", admin_address_path(admin_address), "post" do
-
       assert_select "input[name=?]", "admin_address[first_name]"
 
       assert_select "input[name=?]", "admin_address[last_name]"

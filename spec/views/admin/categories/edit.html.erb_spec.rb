@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe "admin/categories/edit", type: :view do
-  let(:admin_category) {
+  let(:admin_category) do
     Admin::Category.create!(
       name: "MyString",
       description: "MyText"
     )
-  }
+  end
 
   before(:each) do
     assign(:admin_category, admin_category)
@@ -16,7 +16,6 @@ RSpec.describe "admin/categories/edit", type: :view do
     render
 
     assert_select "form[action=?][method=?]", admin_category_path(admin_category), "post" do
-
       assert_select "input[name=?]", "admin_category[name]"
 
       assert_select "textarea[name=?]", "admin_category[description]"

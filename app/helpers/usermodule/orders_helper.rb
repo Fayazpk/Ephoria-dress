@@ -1,5 +1,5 @@
 # C:\Users\Admin\Desktop\ruby\euphoria\app\helpers\usermodule\orders_helper.rb
-module Usermodule::OrdersHelper 
+module Usermodule::OrdersHelper
   def status_badge_class(status)
     case status
     when 'pending' then 'bg-yellow-200 text-yellow-800'
