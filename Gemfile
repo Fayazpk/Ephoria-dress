@@ -44,47 +44,50 @@ gem "kamal", require: false
 gem "thruster", require: false
 
  # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
- gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 1.2"
+
+gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+
+# Static analysis for security vulnerabilities [https://brakemanscanner.org/]
+gem "brakeman", require: false
+
+# Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
+gem "rubocop-rails-omakase", require: false
+
+gem "rspec-rails", "~> 6.0" # For RSpec
+gem "dotenv-rails"
+gem "mail"
+gem "letter_opener"
+
+gem "google-cloud-storage"
+gem "kaminari"
+gem "cocoon", "~> 1.2", ">= 1.2.15"
+gem "pry"
+gem "pry-rails"
+gem "city-state"
+gem "webpacker"
+gem 'wkhtmltopdf-binary', '~> 0.12.6.8'
+gem 'wicked_pdf'
+gem "groupdate"
+gem 'rubocop', '~> 1.69', '>= 1.69.2'
+gem 'prawn' 
+gem 'caxlsx'
+gem 'caxlsx_rails'
+
+gem "web-console"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+  
+end
 
-  # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  gem "brakeman", require: false
-
-  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
-  gem "rubocop-rails-omakase", require: false
-
-    gem "rspec-rails", "~> 6.0" # For RSpec
-    gem "dotenv-rails"
-    gem "mail"
-    gem "letter_opener"
-
-    gem "google-cloud-storage"
-    gem "kaminari"
-    gem "cocoon", "~> 1.2", ">= 1.2.15"
-    gem "pry"
-    gem "pry-rails"
-    gem "city-state"
-    gem "webpacker"
-    gem 'wkhtmltopdf-binary', '~> 0.12.6.8'
-    gem 'wicked_pdf'
-    gem "groupdate"
-    gem 'rubocop', '~> 1.69', '>= 1.69.2'
-    gem 'prawn' 
-    gem 'caxlsx'
-    gem 'caxlsx_rails'
-  end
-
-  group :test do
+group :test do
     gem "factory_bot_rails"    # For test data creation
     gem "faker"                # For generating fake test data
-  end
+end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
-  gem "web-console"
 end
 
 group :test do
