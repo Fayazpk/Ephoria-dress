@@ -12,7 +12,7 @@ fi
 export PATH="/opt/render/project/rubies/ruby-3.3.5/bin:$PATH"
 
 # Install dependencies using yarn
-yarn install || { echo "Yarn install failed. Exiting."; exit 1; }
+yarn install --non-interactive || { echo "Yarn install failed. Exiting."; exit 1; }
 
 # Check if webpack and webpack-cli are installed
 if ! command -v webpack; then
