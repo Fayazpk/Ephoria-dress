@@ -7,4 +7,4 @@ environment.config.set('node', {
   global: true
 })
 
-module.exports = environment
+module.exports = environment.toWebpackConfig()
