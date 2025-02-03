@@ -6,8 +6,7 @@ set -o errexit
 which ruby || echo "Ruby is not installed. Please install Ruby."
 
 # Install dependencies
-npm install -g webpack webpack-cli
-npm install webpack-cli --save-dev
+npm install -g webpack webpack-cli || yarn add -D webpack-cli
 bundle install --without development test
 
 # Fix permissions
