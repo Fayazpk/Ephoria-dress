@@ -8,12 +8,18 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "webpack",
+    "webpack-cli": "webpack-cli",
+    "build": "webpack --config ./config/webpack/production.js --openssl-legacy-provider"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-private-methods": "^7.25.9",
+    "@babel/plugin-transform-private-property-in-object": "^7.25.9",
     "@types/json-schema": "^7.0.15",
     "browserslist": "^4.24.4",
     "events": "^3.3.0",
@@ -22,8 +28,12 @@
     "neo-async": "^2.6.2",
     "tapable": "^2.2.1",
     "watchpack": "^2.4.2",
-    "webpack": "^5.0.0",
-    "webpack-cli": "^4.0.0",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^4.10.0",
     "webpack-dev-server": "3"
+  },
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
+    "@hotwired/stimulus-webpack-helpers": "^1.0.1"
   }
 }
