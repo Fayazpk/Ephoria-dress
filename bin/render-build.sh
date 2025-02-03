@@ -11,10 +11,13 @@ fi
 # Ensure correct Ruby path
 export PATH="/opt/render/project/rubies/ruby-3.3.5/bin:$PATH"
 
-# Install dependencies with npm or yarn as fallback
-if ! npm install -g webpack webpack-cli; then
-  echo "npm installation failed, trying yarn..."
-  yarn add -D webpack webpack-cli || { echo "Failed to install webpack and webpack-cli"; exit 1; }
+# Install dependencies using yarn
+yarn global add webpack webpack-cli || { echo "Failed to install webpack and webpack-cli"; exit 1; }
+
+# Check if webpack-cli is installed
+if ! command -v webpack; then
+  echo "webpack-cli is not installed. Exiting."
+  exit 1
 fi
 
 # Fix permissions
