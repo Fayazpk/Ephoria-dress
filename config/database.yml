@@ -6,9 +6,9 @@ default: &default
 development:
   primary:
     <<: *default
-    database: euphoria_dev
+    database: euphoria_development
     username: postgres
-    password: 'postgres'
+    password: '123'
     host: localhost
     port: 5432
 
@@ -17,29 +17,29 @@ test:
     <<: *default
     database: euphoria_test
     username: postgres
-    password: 'postgres'
+    password: '123'
     host: localhost
     port: 5432
   cable:
     <<: *default
     database: euphoria_test
     username: postgres
-    password: 'postgres'
+    password: '123'
     host: localhost
     port: 5432
 
 production:
   primary:
     <<: *default
-    database: euphoria_prod
-    username: postgres
-    password: 'postgres'
+    database: euphoria_production
+    username: euphoria
+    password: '123'
     host: localhost
     port: 5432
   cable:
     <<: *default
-    database: euphoria_prod
-    username: postgres
-    password: 'postgres'
+    database: euphoria_production
+    username: euphoria
+    password: '123'
     host: localhost
     port: 5432

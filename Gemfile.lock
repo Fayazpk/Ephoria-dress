@@ -313,6 +313,9 @@ GEM
     parser (3.3.6.0)
       ast (~> 2.4.1)
       racc
+    passenger (5.3.7)
+      rack
+      rake (>= 0.8.1)
     pdf-core (0.10.0)
     pg (1.5.9)
     pg (1.5.9-x64-mingw-ucrt)
@@ -558,6 +561,7 @@ DEPENDENCIES
   omniauth (~> 2.1, >= 2.1.2)
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
+  passenger (~> 5.0, >= 5.0.30)
   pg (~> 1.1)
   prawn
   propshaft
