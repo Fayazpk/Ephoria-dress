@@ -18,37 +18,24 @@ class Admin::CouponsController < ApplicationController
 
   def create
     @admin_coupon = Coupon.new(coupon_params)
-
-    respond_to do |format|
-      if @admin_coupon.save
-        format.html { redirect_to admin_coupon_path(@admin_coupon), notice: "Coupon was successfully created." }
-        format.json { render :show, status: :created, location: @admin_coupon }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @admin_coupon.errors, status: :unprocessable_entity }
-      end
+    if @admin_coupon.save
+      redirect_to admin_coupon_path(@admin_coupon), notice: "Coupon was successfully created."
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   def update
-    respond_to do |format|
-      if @admin_coupon.update(coupon_params)
-        format.html { redirect_to admin_coupon_path(@admin_coupon), notice: "Coupon was successfully updated." }
-        format.json { render :show, status: :ok, location: @admin_coupon }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @admin_coupon.errors, status: :unprocessable_entity }
-      end
+    if @admin_coupon.update(coupon_params)
+      redirect_to admin_coupon_path(@admin_coupon), notice: "Coupon was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     @admin_coupon.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to admin_coupons_path, status: :see_other, notice: "Coupon was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to admin_coupons_path, status: :see_other, notice: "Coupon was successfully destroyed."
   end
 
   private

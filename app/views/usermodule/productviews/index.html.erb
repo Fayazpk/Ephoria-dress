@@ -157,7 +157,7 @@
         data-variant-id="<%= variant.id %>"
         data-stock="<%= variant_size.stock.to_i %>"
       >
-        <span class="block text-sm mb-1"><%= variant_size.size.size.capitalize %></span>
+        <span class="block text-sm mb-1"> <%= variant_size.size.size&.capitalize %></span>
         <% if variant_size.stock.to_i > 0 %>
           <span class="block text-xs text-green-500">In Stock</span>
         <% else %>

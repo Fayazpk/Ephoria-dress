@@ -19,7 +19,6 @@ class Admin::UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-
     if @user.save
       redirect_to admin_user_path(@user), notice: 'User was successfully created.'
     else
@@ -36,25 +35,21 @@ class Admin::UsersController < ApplicationController
   end
 
   def destroy
-    @user = User.find_by(id: params[:id])
-    if @user
+    if @user = User.find_by(id: params[:id])
       @user.destroy
-      flash[:notice] = "User was successfully deleted."
+      redirect_to admin_users_path, notice: "User was successfully deleted."
     else
-      flash[:alert] = "User not found."
+      redirect_to admin_users_path, alert: "User not found."
     end
-    redirect_to admin_users_path
   end
 
   def toggle_block
-    @user = User.find_by(id: params[:id])
-    if @user
+    if @user = User.find_by(id: params[:id])
       @user.update(is_blocked: !@user.is_blocked)
       status = @user.is_blocked ? 'blocked' : 'unblocked'
       redirect_to admin_user_path(@user), notice: "User was successfully #{status}."
     else
-      flash[:alert] = "User not found."
-      redirect_to admin_users_path
+      redirect_to admin_users_path, alert: "User not found."
     end
   end
 

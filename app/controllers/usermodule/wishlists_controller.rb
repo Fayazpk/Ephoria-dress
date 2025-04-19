@@ -7,45 +7,26 @@ module Usermodule
     end
 
     def create
-      @wishlist = current_user.wishlists.new(product: @product)
-
-      if @wishlist.save
-        render json: {
-          success: true,
-          message: "Item added to wishlist",
-          is_wishlisted: true
-        }
+      if current_user.wishlists.new(product: @product).save
+        render json: { success: true, message: "Item added to wishlist", is_wishlisted: true }
       else
-        render json: {
-          success: false,
-          message: "Item addition to wishlist failed",
-          is_wishlisted: false
-        }, status: :unprocessable_entity
+        render json: { success: false, message: "Item addition to wishlist failed", is_wishlisted: false }, status: :unprocessable_entity
       end
     end
 
     def destroy
-      @wishlist = current_user.wishlists.find_by(product: @product)
-
-      if @wishlist&.destroy
-        render json: {
-          success: true,
-          message: "Item deleted from wishlist",
-          is_wishlisted: false
-        }
+      wishlist = current_user.wishlists.find_by(product: @product)
+      if wishlist&.destroy
+        render json: { success: true, message: "Item deleted from wishlist", is_wishlisted: false }
       else
-        render json: {
-          success: false,
-          message: "Item deletion from wishlist failed"
-        }, status: :unprocessable_entity
+        render json: { success: false, message: "Item deletion from wishlist failed" }, status: :unprocessable_entity
       end
     end
 
     private
 
     def set_product
-      product_id = params[:product_id] || params[:id]
-      @product = Product.find_by(id: product_id)
+      @product = Product.find_by(id: params[:product_id] || params[:id])
       render json: { success: false, message: "Product not found" }, status: :not_found unless @product
     end
   end

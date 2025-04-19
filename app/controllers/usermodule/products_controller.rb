@@ -3,8 +3,7 @@ class Usermodule::ProductsController < ApplicationController
   before_action :find_product, only: [:show]
 
   def index
-    @products = @subcategory.products
-    @products = @products.order(sort_order(params[:sort]))
+    @products = @subcategory.products.order(sort_order(params[:sort]))
     @products = @products.where("base_price >= ?", params[:min_price]) if params[:min_price].present?
     @products = @products.where("base_price <= ?", params[:max_price]) if params[:max_price].present?
     @products = @products.where("name ILIKE ?", "%#{params[:query]}%") if params[:query].present?
@@ -12,18 +11,7 @@ class Usermodule::ProductsController < ApplicationController
 
   def search
     if params[:query].present?
-      @products = Product.where('name ILIKE ?', "%#{params[:query]}%")
-                         .limit(10)
-                         .select(:id, :name, :category_id, :subcategory_id)
-
-      render json: @products.map { |product|
-        {
-          id: product.id,
-              name: product.name,
-              category_id: product.category_id,
-              subcategory_id: product.subcategory_id
-        }
-      }
+      render json: Product.where('name ILIKE ?', "%#{params[:query]}%").limit(10).select(:id, :name, :category_id, :subcategory_id).map { |p| { id: p.id, name: p.name, category_id: p.category_id, subcategory_id: p.subcategory_id } }
     else
       render json: []
     end
@@ -32,8 +20,7 @@ class Usermodule::ProductsController < ApplicationController
   def show
     @product = @subcategory.products.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    flash[:alert] = "Product not found."
-    redirect_to usermodule_category_subcategory_products_path(@category, @subcategory)
+    redirect_to usermodule_category_subcategory_products_path(@category, @subcategory), alert: "Product not found."
   end
 
   private
@@ -42,28 +29,19 @@ class Usermodule::ProductsController < ApplicationController
 
   def set_category_and_subcategory
     @category = Category.find_by(id: params[:category_id])
-    unless @category
-      flash[:alert] = "Category not found."
-      redirect_to root_path and return
-    end
-
+    redirect_to root_path, alert: "Category not found." unless @category
     @subcategory = @category.subcategories.find_by(id: params[:subcategory_id])
-    unless @subcategory
-      flash[:alert] = "Subcategory not found for the given category."
-      redirect_to categories_path and return
-    end
+    redirect_to categories_path, alert: "Subcategory not found for the given category." unless @subcategory
   end
 
   def find_product
     @product = @subcategory.products.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    flash[:alert] = "Product not found."
-    redirect_to usermodule_category_subcategory_products_path(@category, @subcategory)
+    redirect_to usermodule_category_subcategory_products_path(@category, @subcategory), alert: "Product not found."
   end
 
   def sort_order(option)
     case option
-
     when "price_asc" then { base_price: :asc }
     when "price_desc" then { base_price: :desc }
     when "newest" then { created_at: :desc }

@@ -7,124 +7,179 @@
     <title>Collections | <%= @subcategory.name %></title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-        @keyframes hover-card {
-            0% { transform: translateY(0) rotateX(0); }
-            100% { transform: translateY(-10px) rotateX(5deg); }
-        }
-        
-        .product-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            perspective: 1000px;
-            transform-origin: center center;
-        }
-        
-        .product-card:hover {
-            animation: hover-card 0.3s forwards;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-        
-        .discount-badge {
-            background: linear-gradient(135deg, #ff6b6b, #ff9900);
-        }
-        
-        .filter-sidebar {
-            height: calc(100vh - 2rem);
-            position: sticky;
-            top: 1rem;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
-        }
-        
-        .filter-sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .filter-sidebar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        .filter-sidebar::-webkit-scrollbar-thumb {
-            background-color: rgba(156, 163, 175, 0.5);
-            border-radius: 3px;
-        }
-
-        .wishlist-btn:focus {
-            outline: 2px solid #3b82f6;
-            outline-offset: 2px;
-        }
-
-        .product-image-placeholder {
-            background: linear-gradient(45deg, #f3f4f6 25%, #e5e7eb 25%, #e5e7eb 50%, #f3f4f6 50%, #f3f4f6 75%, #e5e7eb 75%, #e5e7eb 100%);
-            background-size: 20px 20px;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .product-card {
-                animation: none;
-                transform: none;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/styles/products.css">
 </head>
-<body class="bg-gray-50">
-    <div class="container mx-auto px-4 py-8">
-        
-        
+<body class="bg-gray-50 font-sans">
+    <!-- Breadcrumbs -->
+    <div class="container mx-auto px-4 py-4">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                        </svg>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <a href="/collections" class="ml-1 text-sm text-gray-500 hover:text-blue-600 transition-colors md:ml-2">Collections</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <a href="#" class="ml-1 text-sm text-gray-500 hover:text-blue-600 transition-colors md:ml-2"><%= @subcategory.category.name %></a>
+                    </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="ml-1 text-sm font-medium text-gray-700 md:ml-2"><%= @subcategory.name %></span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
 
-        <div class="flex flex-col md:flex-row gap-8">
-            <!-- Filter Sidebar -->
-            <aside class="md:w-64 flex-shrink-0">
-                <div class="bg-white rounded-lg shadow-md p-6 filter-sidebar">
-                    <h2 class="text-lg font-semibold mb-4">Sort By</h2>
-                    <nav class="space-y-3">
+    <!-- Hero Banner -->
+    <div class="category-banner relative mb-8">
+        <div class="container mx-auto px-4">
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-800 rounded-xl overflow-hidden">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="p-8 md:p-12 md:w-1/2">
+                        <h1 class="text-3xl md:text-4xl font-bold text-white mb-4"><%= @subcategory.name %></h1>
+                        <p class="text-blue-100 mb-6"><%= @subcategory.description %></p>
+                    </div>
+                    <div class="md:w-1/2 h-48 md:h-64 bg-blue-700 flex items-center justify-center opacity-80">
+                        <% if @subcategory.image.attached? %>
+                            <%= image_tag @subcategory.image, class: "w-full h-full object-cover mix-blend-overlay" %>
+                        <% else %>
+                            <div class="banner-pattern w-full h-full"></div>
+                        <% end %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 pb-16">
+        <!-- Filter and Sort Controls -->
+        <div class="mb-8 flex flex-col md:flex-row justify-between items-start gap-4">
+            <div class="w-full md:w-auto">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-2"><%= @products.count %> Products</h2>
+                <p class="text-gray-500">Browse our collection of <%= @subcategory.name.downcase %></p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                <!-- Filter Button (Mobile) -->
+                <button id="filter-toggle" class="md:hidden flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-gray-700 hover:bg-gray-50">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                    </svg>
+                    Filters
+                </button>
+                
+                <!-- Sort Dropdown -->
+                <div class="relative sort-dropdown w-full sm:w-auto">
+                    <select id="sort-products" class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="window.location.href=this.value">
                         <% sort_options = {
-                            'price_asc' => { icon: 'sort-amount-down-alt', text: 'Price: Low to High' },
-                            'price_desc' => { icon: 'sort-amount-up', text: 'Price: High to Low' },
-                            'newest' => { icon: 'calendar-alt', text: 'Newest First' },
-                            'discount' => { icon: 'percent', text: 'Biggest Discount' }
+                            'price_asc' => { text: 'Price: Low to High' },
+                            'price_desc' => { text: 'Price: High to Low' },
+                            'newest' => { text: 'Newest First' },
+                            'discount' => { text: 'Biggest Discount' }
                         } %>
                         
-                        <% sort_options.each do |key, option| %>
-                            <%= link_to usermodule_category_subcategory_products_path(@subcategory.category_id, @subcategory, sort: key),
-                                class: "block text-gray-600 hover:text-blue-600 transition-colors #{params[:sort] == key ? 'text-blue-600 font-semibold' : ''}" do %>
-                                <i class="fas fa-<%= option[:icon] %> mr-2"></i><%= option[:text] %>
-                            <% end %>
-                        <% end %>
-                    </nav>
-                </div>
-            </aside>
-
-            <!-- Main Content -->
-            <main class="flex-1">
-                <!-- Mobile Sort Bar -->
-                <div class="md:hidden mb-6">
-                    <label for="sort-mobile" class="sr-only">Sort products</label>
-                    <select id="sort-mobile" 
-                            class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                            onchange="window.location.href=this.value">
+                        <option disabled>Sort By</option>
                         <% sort_options.each do |key, option| %>
                             <option value="<%= usermodule_category_subcategory_products_path(@subcategory.category_id, @subcategory, sort: key) %>"
                                     <%= params[:sort] == key ? 'selected' : '' %>><%= option[:text] %></option>
                         <% end %>
                     </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Product Grid -->
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Filter Sidebar -->
+            <aside id="filter-sidebar" class="md:w-64 md:flex-shrink-0 filter-sidebar hidden md:block">
+                <div class="bg-white rounded-xl shadow-sm p-6 sticky top-4">
+                    <h3 class="text-lg font-medium text-gray-900 mb-6 pb-2 border-b border-gray-200">Filters</h3>
+                    
+                    <!-- Price Range -->
+                    <div class="mb-6">
+                        <h4 class="font-medium text-gray-800 mb-3">Price</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <input id="price-all" name="price" type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="price-all" class="ml-3 text-sm text-gray-600">All Prices</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="price-under-50" name="price" type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="price-under-50" class="ml-3 text-sm text-gray-600">Under $50</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="price-50-100" name="price" type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="price-50-100" class="ml-3 text-sm text-gray-600">$50 - $100</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="price-over-100" name="price" type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="price-over-100" class="ml-3 text-sm text-gray-600">Over $100</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Discounts -->
+                    <div class="mb-6">
+                        <h4 class="font-medium text-gray-800 mb-3">Discounts</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <input id="discount-all" name="discount" type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="discount-all" class="ml-3 text-sm text-gray-600">All Items</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="discount-sale" name="discount" type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="discount-sale" class="ml-3 text-sm text-gray-600">On Sale</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Clear Filters Button -->
+                    <button class="w-full py-2 px-4 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                        Clear All Filters
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Product Grid -->
+            <main class="flex-1">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
                     <% @products.each do |product| %>
-                        <article class="contents" role="listitem">
-                        <%= link_to usermodule_category_subcategory_product_productviews_path(@subcategory.category, @subcategory, product),
-                        :class => "group",
-                        "aria-label" => "View details for #{product.name}" do %>
-                                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden h-full">
-                                    <div class="relative">
+                        <article class="product-card" role="listitem">
+                            <%= link_to usermodule_category_subcategory_product_productviews_path(@subcategory.category, @subcategory, product),
+                            class: "group block",
+                            "aria-label" => "View details for #{product.name}" do %>
+                                <div class="bg-white rounded-xl shadow-sm overflow-hidden h-full transition-all duration-300">
+                                    <div class="relative overflow-hidden product-image-container">
                                         <% if product.images.any? %>
                                             <%= image_tag(product.images.first, 
-                                                        class: "w-full h-72 object-cover", 
+                                                        class: "w-full h-80 object-cover transition-transform duration-500", 
                                                         alt: product.name) %>
                                         <% else %>
-                                            <div class="w-full h-72 product-image-placeholder flex items-center justify-center">
+                                            <div class="w-full h-80 product-image-placeholder flex items-center justify-center">
                                                 <i class="fas fa-image text-gray-400 text-6xl" aria-hidden="true"></i>
                                             </div>
                                         <% end %>
@@ -138,26 +193,33 @@
                                         <% end %>
 
                                         <button type="button"
-                                                class="wishlist-btn absolute top-4 left-4 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:bg-gray-100 transition-colors duration-200"
+                                                class="wishlist-btn absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center shadow-sm hover:bg-white transition-all duration-200"
                                                 data-wishlist-button
                                                 data-product-id="<%= product.id %>"
                                                 data-wishlisted="<%= current_user&.wishlists&.exists?(product: product) %>"
-                                                aria-label="<%= current_user&.wishlists&.exists?(product: product) ? 'Remove from wishlist' : 'Add to wishlist' %>">
+                                                aria-label="<%= current_user&.wishlists&.exists?(product: product) ? 'Remove from wishlist' : 'Add to wishlist' %>"
+                                                onclick="event.preventDefault(); event.stopPropagation();">
                                             <i class="<%= current_user&.wishlists&.exists?(product: product) ? 'fas' : 'far' %> fa-heart <%= current_user&.wishlists&.exists?(product: product) ? 'text-red-500' : 'text-gray-600' %>" 
                                                aria-hidden="true"></i>
                                         </button>
+                                        
+                                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent pt-10 pb-4 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <button class="w-full py-2 bg-white/90 backdrop-blur-sm rounded-full text-gray-900 font-medium hover:bg-white transition-colors duration-200">
+                                                View Details
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <div class="p-4 flex flex-col flex-grow">
-                                        <h3 class="text-lg font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                                    <div class="p-5">
+                                        <h3 class="text-lg font-medium text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                                             <%= product.name %>
                                         </h3>
-                                        <p class="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">
+                                        <p class="text-gray-500 text-sm mb-4 line-clamp-2">
                                             <%= product.description %>
                                         </p>
-                                        <div class="flex items-center justify-between mt-auto">
-                                            <div class="flex items-center">
-                                                <span class="text-xl font-bold text-gray-900 mr-3">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xl font-semibold text-gray-900">
                                                     $<%= number_with_precision(product.final_price, precision: 2) %>
                                                 </span>
                                                 <% if product.discount_percentage > 0 %>
@@ -173,12 +235,47 @@
                         </article>
                     <% end %>
                 </div>
+                
+                <!-- Pagination -->
+                <div class="mt-10 flex justify-center">
+                    <nav class="inline-flex shadow-sm rounded-md">
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Previous</span>
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-blue-600 hover:bg-gray-50">1</a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">2</a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">3</a>
+                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">8</a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Next</span>
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </nav>
+                </div>
             </main>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Filter toggle for mobile
+            const filterToggle = document.getElementById('filter-toggle');
+            const filterSidebar = document.getElementById('filter-sidebar');
+            
+            if(filterToggle && filterSidebar) {
+                filterToggle.addEventListener('click', function() {
+                    filterSidebar.classList.toggle('hidden');
+                    filterSidebar.classList.toggle('filter-sidebar-mobile');
+                });
+            }
+            
+            // Wishlist functionality
             const wishlistButtons = document.querySelectorAll('[data-wishlist-button]');
             
             wishlistButtons.forEach(button => {

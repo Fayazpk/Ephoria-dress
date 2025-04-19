@@ -3,7 +3,6 @@ module Usermodule
     before_action :set_address, only: %i[show edit update destroy]
     before_action :authenticate_user!
 
-
     def index
       @addresses = current_user.addresses
     end
@@ -13,8 +12,6 @@ module Usermodule
 
     def new
       @address = current_user.addresses.new
-      @states = []
-      @cities = []
     end
 
     def edit
@@ -24,69 +21,42 @@ module Usermodule
 
     def create
       @address = current_user.addresses.build(address_params)
-
-      respond_to do |format|
-        if @address.save
-          format.html { redirect_to usermodule_address_path(@address), notice: "Address was successfully created." }
-          format.json { render :show, status: :created, location: @address }
-        else
-
-          @states = @address.country&.states || []
-          @cities = @address.state&.cities || []
-
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @address.errors, status: :unprocessable_entity }
-        end
+      if @address.save
+        redirect_to usermodule_address_path(@address), notice: "Address was successfully created."
+      else
+        @states = @address.country&.states || []
+        @cities = @address.state&.cities || []
+        render :new, status: :unprocessable_entity
       end
     end
 
     def update
-      respond_to do |format|
-        if @address.update(address_params)
-          format.html { redirect_to usermodule_address_path(@address), notice: "Address was successfully updated." }
-          format.json { render :show, status: :ok, location: @address }
-        else
-
-          @states = @address.country&.states || []
-          @cities = @address.state&.cities || []
-
-          format.html { render :edit, status: :unprocessable_entity }
-          format.json { render json: @address.errors, status: :unprocessable_entity }
-        end
+      if @address.update(address_params)
+        redirect_to usermodule_address_path(@address), notice: "Address was successfully updated."
+      else
+        @states = @address.country&.states || []
+        @cities = @address.state&.cities || []
+        render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
       @address.destroy!
-
-      respond_to do |format|
-        format.html { redirect_to usermodule_addresses_path, notice: "Address was successfully destroyed." }
-        format.json { head :no_content }
-      end
+      redirect_to usermodule_addresses_path, notice: "Address was successfully destroyed."
     end
 
     def get_states
-      begin
-        states = State.where(country_id: params[:country_id])
-                      .select(:id, :name)
-                      .order(:name)
-        Rails.logger.info(states)
-
-        render json: states
-      rescue
-        render json: { error: "Failed to load states" }, status: :unprocessable_entity
-      end
+      states = State.where(country_id: params[:country_id]).select(:id, :name).order(:name)
+      render json: states
+    rescue
+      render json: { error: "Failed to load states" }, status: :unprocessable_entity
     end
 
     def get_cities
-      begin
-        cities = City.where(state_id: params[:state_id])
-                     .select(:id, :name)
-                     .order(:name)
-        render json: cities
-      rescue
-        render json: { error: "Failed to load cities" }, status: :unprocessable_entity
-      end
+      cities = City.where(state_id: params[:state_id]).select(:id, :name).order(:name)
+      render json: cities
+    rescue
+      render json: { error: "Failed to load cities" }, status: :unprocessable_entity
     end
 
     private
@@ -95,17 +65,8 @@ module Usermodule
       @address = current_user.addresses.find(params[:id])
     end
 
-    def load_countries
-      @countries = Country.all
-    end
-
     def address_params
-      params.require(:address).permit(
-        :first_name, :last_name, :building_name,
-        :street_address, :country_id, :state_id,
-        :city_id, :phone, :country_name, :state_name,
-        :city_name
-      )
+      params.require(:address).permit(:first_name, :last_name, :building_name, :street_address, :country_id, :state_id, :city_id, :phone, :country_name, :state_name, :city_name)
     end
   end
 end

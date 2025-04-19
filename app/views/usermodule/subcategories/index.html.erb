@@ -3,64 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subcategories - <%= @category.name %></title>
+    <title>Subcategories - <%= @category.name %> | Euphoria Dress</title>
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <%= stylesheet_link_tag 'subcategories', media: 'all' %>
 </head>
-<body class="bg-gray-50">
-<div class="container mx-auto px-4 py-5">
-    <!-- Breadcrumbs -->
-    <nav class="flex mb-6" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-            <li class="inline-flex items-center">
-                <a href="/" class="inline-flex items-center text-sm text-gray-700 hover:text-gray-900">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
-                    </svg>
-                    Home
-                </a>
-            </li>
-            
-            <li>
-                <div class="flex items-center">
-                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    <span class="ml-1 text-sm text-gray-500"><%= @category.name %></span>
+<body>
+    <!-- Hero Banner Section -->
+    <div class="subcategory-hero" style="background-image: url('<%= @category.image.attached? ? url_for(@category.image) : 'https://placehold.co/1200x400' %>')">
+        <div class="overlay">
+            <div class="container mx-auto px-4">
+                <div class="hero-content">
+                    <h1><%= @category.name %></h1>
+                    <p><%= @category.description %></p>
+                    
+                    <!-- Breadcrumbs -->
+                    <nav class="breadcrumbs" aria-label="Breadcrumb">
+                        <ol>
+                            <li>
+                                <a href="/">
+                                    <i class="fas fa-home"></i>
+                                    <span>Home</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/collections">Collections</a>
+                            </li>
+                            <li aria-current="page">
+                                <span><%= @category.name %></span>
+                            </li>
+                        </ol>
+                    </nav>
                 </div>
-            </li>
-        </ol>
-    </nav>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
-    <div class="container mx-auto px-4 py-2">
-        <h2 class="text-3xl font-bold mb-8"><%= @category.name %> - Subcategories</h2>
-        <div class="grid md:grid-cols-3 gap-8">
+    <div class="container mx-auto px-4 py-16">
+        <div class="section-header">
+            <h2>Explore <%= @category.name %></h2>
+            <p>Discover our carefully curated collections designed for your unique style</p>
+        </div>
+
+        <div class="subcategories-grid">
             <% @subcategories.each do |subcategory| %>
-                <%= link_to usermodule_category_subcategory_products_path(@category, subcategory), class: "block" do %>
-                    <div class="product-card bg-white rounded-lg shadow-md overflow-hidden">
-                        <% if subcategory.image.attached? %>
-                            <%= image_tag subcategory.image, class: "w-full h-72 object-cover" %>
-                        <% else %>
-                            <img src="https://placehold.co/400x500" alt="<%= subcategory.name %>" class="w-full h-72 object-cover">
-                        <% end %>
-                        <div class="p-5">
-                            <h3 class="text-xl font-semibold mb-2"><%= subcategory.name %></h3>
-                            <p class="text-gray-600"><%= subcategory.description %></p>
+                <%= link_to usermodule_category_subcategory_products_path(@category, subcategory), class: "subcategory-card-link" do %>
+                    <div class="subcategory-card">
+                        <div class="card-image">
+                            <% if subcategory.image.attached? %>
+                                <%= image_tag subcategory.image %>
+                            <% else %>
+                                <img src="https://placehold.co/400x500" alt="<%= subcategory.name %>">
+                            <% end %>
+                            <div class="hover-overlay">
+                                <span class="explore-btn">Explore Collection</span>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <h3><%= subcategory.name %></h3>
+                            <p><%= subcategory.description %></p>
+                            
                         </div>
                     </div>
                 <% end %>
             <% end %>
         </div>
     </div>
-</div>
+
+   <!-- New Arrivals -->
+  <section class="new-arrivals">
+    <div class="container">
+      <div class="section-header">
+        <h2>New Arrivals</h2>
+        <p>The latest additions to our exclusive collection</p>
+      </div>
+      
+      <div class="products-slider">
+        <% @product.each do |product| %>
+          <div class="product-card">
+            <div class="product-image">
+              <% if product.images.attached? %>
+                <%= image_tag product.images.first, alt: product.name %>
+              <% else %>
+                <div class="placeholder-image">
+                  <i class="fas fa-tshirt"></i>
+                </div>
+              <% end %>
+              <div class="product-actions">
+                <button class="action-btn wishlist-btn">
+                  <i class="far fa-heart"></i>
+                </button>
+                <button class="action-btn cart-btn">
+                  <i class="fas fa-shopping-bag"></i>
+                </button>
+                <button class="action-btn view-btn">
+                  <i class="far fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="product-content">
+              <h3><%= product.name %></h3>
+              <p class="product-description"><%= truncate(product.description, length: 60) %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+
+    <!-- Script for carousel functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.featured-products-carousel').slick({
+                slidesToShow: 4,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 3000,
+                dots: true,
+                arrows: true,
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 3
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
 </body>
 </html>
